@@ -1,6 +1,7 @@
 import { initCanvas } from './Canvas.js'
 import Assets from './Assets.js'
-import { Player, Enemy } from './gameObjects.js'
+import Enemy  from './gameObjects/Enemy.js'
+import Player from './gameObjects/Player.js'
 import { PauseMenu, LoadingMenu, WelcomeMenu, LostMenu, WonMenu, ScoreBoard } from './hud'
 
 const KEYBOARD = {
