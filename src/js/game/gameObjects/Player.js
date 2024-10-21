@@ -10,15 +10,20 @@ export default class Player extends GameObject {
     this.missiles = []
 
     this.texture = args[0].texture
-    this.fireSound = args[0].fireSound
+    this.assets = args[0].assets
   }
 
-  fire () {
-    this.missiles.push(new Missile({ x: this.x + this.width / 2, y: this.y, width: 10, height: 10 }))
-    this.fireSound.pause()
-    this.fireSound.currentTime = 0
-    this.fireSound.play()
-  }
+fire() {
+  this.missiles.push(new Missile({
+    x: this.x + this.width / 2, y: this.y,
+    width: 10,
+    height: 10,
+  }));
+
+  // Play the firing sound without interrupting background music
+  // this.assets.playFireSound();
+}
+
 
   render () {
     // draw the player

@@ -1,6 +1,6 @@
 import GameObject from './GameObject'
 
-export default class Ennemy extends GameObject {
+export default class Enemy extends GameObject {
 
   constructor (...args) {
     super(...args)
@@ -8,12 +8,11 @@ export default class Ennemy extends GameObject {
     this.direction = { x: 1, y: 1 }
 
     this.texture = args[0].texture
-    this.killSound = args[0].killSound
+    this.assets = args[0].assets
   }
 
   die () {
-    this.killSound.currentTime = 0
-    this.killSound.play()
+    this.assets.playKillSound();
   }
 
   move (changeDirection) {

@@ -143,7 +143,7 @@ export default class Game {
       width: 50,
       height: 50,
       texture: this.assets.playerTexture,
-      fireSound: this.assets.fireSound
+      assets: this.assets
     })
   }
 
@@ -161,7 +161,7 @@ export default class Game {
           width: 50,
           height: 50,
           texture: this.assets.enemyTexture,
-          killSound: this.assets.killSound
+          assets: this.assets
         }))
       }
     }
@@ -253,12 +253,12 @@ export default class Game {
 
   pause() {
     this.gameState = STATE.PAUSED
-    this.music.pause()
+    //this.music.pause()
   }
 
   resume () {
     this.gameState = STATE.PLAYING;
-    this.music.play();
+    this.assets.playBackgroundMusic();
   }
 
   reset() {
