@@ -14,80 +14,185 @@ export default class Assets {
     this.killSound = new Audio(killSound);
     this.fireSound = new Audio(fireSound);
 
-    // Initialize Image objects
+    // Create an AudioContext
+    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    // Object to hold decoded audio buffers
+    this.buffers = {};
+
+    // Initialize Image objects and assign `src` for each texture
     this.enemyTexture = new Image();
+    this.enemyTexture.src = enemyTexture;  // Set the image source
+
     this.playerTexture = new Image();
+    this.playerTexture.src = playerTexture;  // Set the image source
 
-    // Configure background music
-    this.music.loop = true; // Loop the background music
-    this.music.volume = 0.5; // Set desired volume level
+    // Paths for audio files
+    this.audioFiles = {
+      music: gameMusic,
+      loose: looseSound,
+      kill: killSound,
+      fire: fireSound,
+    };
 
-    // Configure other sounds (optional: adjust volume levels)
-    this.looseSound.volume = 1.0;
-    this.killSound.volume = 0.5;
-    this.fireSound.volume = 0.5;
+    // Paths for textures
+    this.textureFiles = {
+      enemy: enemyTexture,
+      player: playerTexture,
+    };
   }
 
-  load() {
-    return Promise.all([
-      this.loadAudio(this.music),
-      this.loadAudio(this.looseSound),
-      this.loadTexture(this.enemyTexture, enemyTexture),
-      this.loadAudio(this.killSound),
-      this.loadTexture(this.playerTexture, playerTexture),
-      this.loadAudio(this.fireSound),
-    ]);
+  async load() {
+    try {
+      // Resume the AudioContext upon user interaction
+      await this.resumeAudioContext();
+
+      // Load and decode all audio files
+      const audioPromises = Object.keys(this.audioFiles).map(key => this.loadAudio(key, this.audioFiles[key]));
+
+      // Load all textures
+      const texturePromises = Object.keys(this.textureFiles).map(key => this.loadTexture(this.textureFiles[key], this.textureFiles[key]));
+
+      // Wait for all assets to load
+      await Promise.all([...audioPromises, ...texturePromises]);
+
+      console.log('All assets loaded successfully');
+    } catch (error) {
+      console.error('Error loading assets:', error);
+    }
   }
 
-  loadAudio(audio) {
-    return new Promise((resolve, reject) => {
-      audio.oncanplaythrough = () => {
-        resolve(audio);
+  // Function to resume AudioContext on user interaction
+  async resumeAudioContext() {
+    if (this.audioContext.state === 'suspended') {
+      const resume = () => {
+        this.audioContext.resume().then(() => {
+          document.removeEventListener('click', resume);
+          document.removeEventListener('keydown', resume);
+        });
       };
-      audio.onerror = (err) => {
-        reject(err);
-      };
-      audio.load(); // Start loading the audio
-    });
+      document.addEventListener('click', resume);
+      document.addEventListener('keydown', resume);
+      // Wait until AudioContext is resumed
+      return new Promise((resolve) => {
+        const checkState = () => {
+          if (this.audioContext.state === 'running') {
+            resolve();
+          } else {
+            requestAnimationFrame(checkState);
+          }
+        };
+        checkState();
+      });
+    }
   }
 
-  loadTexture(texture, src) {
+  // Load and decode audio files
+  async loadAudio(key, url) {
+    try {
+      const response = await fetch(url);
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+      this.buffers[key] = audioBuffer;
+      console.log(`Audio loaded: ${key}`);
+    } catch (error) {
+      console.error(`Error loading audio (${key}):`, error);
+      throw error;
+    }
+  }
+
+  // Load textures
+  loadTexture(src) {
     return new Promise((resolve, reject) => {
+      const texture = new Image(); // Create a new Image object
+
       texture.onload = () => {
+        console.log(`Texture loaded: ${src}`);
         resolve(texture);
       };
+
       texture.onerror = (err) => {
+        console.error(`Error loading texture (${src}):`, err);
         reject(err);
       };
-      texture.src = src; // Start loading the image
+
+      // Assign the source to the image
+      texture.src = src;
     });
   }
 
-  // Method to play background music
+  // Play background music
   playBackgroundMusic() {
-    this.music.play().catch((error) => {
-      console.error('Error playing background music:', error);
-    });
+    // Check if the music buffer is loaded
+    if (!this.buffers.music) {
+      console.error('Background music buffer is not loaded yet.');
+      return;
+    }
+
+    const source = this.audioContext.createBufferSource();
+    source.buffer = this.buffers.music;
+    source.loop = true;
+
+    const gainNode = this.audioContext.createGain();
+    gainNode.gain.value = 0.5; // Adjust volume as needed
+
+    source.connect(gainNode).connect(this.audioContext.destination);
+    source.start(0);
+
+    this.backgroundMusicSource = source; // Keep reference if you need to stop it later
   }
 
-  // Method to play firing sound without interrupting background music
+  // Play firing sound
   playFireSound() {
-    const fireSoundClone = this.fireSound.cloneNode(); // Clone the fire sound
-    fireSoundClone.play().catch((error) => {
-      console.error('Error playing fire sound:', error);
-    });
+    // Check if the fire sound buffer is loaded
+    if (!this.buffers.fire) {
+      console.error('Fire sound buffer is not loaded yet.');
+      return;
+    }
+
+    const source = this.audioContext.createBufferSource();
+    source.buffer = this.buffers.fire;
+
+    const gainNode = this.audioContext.createGain();
+    gainNode.gain.value = 1.0; // Adjust volume as needed
+
+    source.connect(gainNode).connect(this.audioContext.destination);
+    source.start(0);
   }
 
-  // Optional: Methods to play other sounds
+  // Play loose sound
   playLooseSound() {
-    this.looseSound.play().catch((error) => {
-      console.error('Error playing loose sound:', error);
-    });
+    // Check if the loose sound buffer is loaded
+    if (!this.buffers.loose) {
+      console.error('Loose sound buffer is not loaded yet.');
+      return;
+    }
+
+    const source = this.audioContext.createBufferSource();
+    source.buffer = this.buffers.loose;
+
+    const gainNode = this.audioContext.createGain();
+    gainNode.gain.value = 1.0; // Adjust volume as needed
+
+    source.connect(gainNode).connect(this.audioContext.destination);
+    source.start(0);
   }
 
+  // Play kill sound
   playKillSound() {
-    this.killSound.play().catch((error) => {
-      console.error('Error playing kill sound:', error);
-    });
+    // Check if the kill sound buffer is loaded
+    if (!this.buffers.kill) {
+      console.error('Kill sound buffer is not loaded yet.');
+      return;
+    }
+
+    const source = this.audioContext.createBufferSource();
+    source.buffer = this.buffers.kill;
+
+    const gainNode = this.audioContext.createGain();
+    gainNode.gain.value = 1.0; // Adjust volume as needed
+
+    source.connect(gainNode).connect(this.audioContext.destination);
+    source.start(0);
   }
 }
