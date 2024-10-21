@@ -20,7 +20,7 @@ export default class Ennemy extends GameObject {
     // change direction
     if (changeDirection) this.direction.x *= -1
     this.x += this.direction.x * this.velocity
-    this.y += this.direction.y * this.velocity
+    //this.y += this.direction.y * this.velocity
   }
 
   render () {

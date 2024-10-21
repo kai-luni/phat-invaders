@@ -28,7 +28,8 @@ export default class Game {
    * @param {String} params.el - css selector for the canvas element
    * @param {Integer} params.nbEnemies - number of enemies to generate
    */
-  constructor({ el, nbEnemies = 3 }) {
+  constructor({ nbEnemies = 3 }) {
+    var el = '#game'
     this.canvas = initCanvas({ el })
     this.nbEnemies = nbEnemies
     this.initialNbEnemies = nbEnemies
@@ -152,14 +153,16 @@ export default class Game {
   generateEnemies(nb) {
     let enemies = []
     for (let i = 0; i < nb; i++) {
-      enemies.push(new Enemy({
-        x: (this.canvas.width * (i / nb)) + (this.canvas.width / (2 * nb)),
-        y: 50 + 200 * Math.random(), // generates a random number beween 50 & 250
-        width: 75,
-        height: 75,
-        texture: this.assets.enemyTexture,
-        killSound: this.assets.killSound
-      }))
+      for (let j = 0; j < 6; j++) {
+        enemies.push(new Enemy({
+          x: (this.canvas.width / 8) + (i * 54),
+          y: 64 + (j * 54), // generates a random number beween 50 & 250
+          width: 50,
+          height: 50,
+          texture: this.assets.enemyTexture,
+          killSound: this.assets.killSound
+        }))
+      }
     }
     return enemies
   }

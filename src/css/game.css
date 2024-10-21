@@ -18,7 +18,21 @@ canvas#game {
   display: block;
   background-color: var(--bg-color);
   background-image: url('../assets/background.jpg');
+  
+  /* Ensure the background covers the entire canvas */
   background-size: cover;
   background-repeat: no-repeat;
-  background-position: 50%;
+  background-position: center;
+
+  /* Set a fixed height */
+  height: 1000px; /* Fixed height as requested */
+  
+  /* Ensure the canvas width is responsive */
+  width: 100%;
+  max-width: 100%;
+  
+  /* Optional: Center the canvas horizontally */
+  margin: 0 auto;
 }
+
+
