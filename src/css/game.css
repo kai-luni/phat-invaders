@@ -19,20 +19,26 @@ canvas#game {
   background-color: var(--bg-color);
   background-image: url('../assets/background.jpg');
   
-  /* Ensure the background covers the entire canvas */
+  /* Maintain aspect ratio and responsiveness */
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
 
-  /* Set a fixed height */
-  height: 1000px; /* Fixed height as requested */
+  /* Ensure the canvas stays square and resizes based on the smaller dimension */
+  width: 100vw; /* Full viewport width */
+  height: 100vw; /* Match width initially */
+  max-width: 1000px; /* Limit maximum width */
+  max-height: 1000px; /* Limit maximum height */
   
-  /* Ensure the canvas width is responsive */
-  width: 100%;
-  max-width: 100%;
-  
-  /* Optional: Center the canvas horizontally */
+  /* Prevent overflow and ensure square shape based on the smaller of width or height */
+  width: min(100vw, 100vh);  /* Use the smaller of the two (width or height) */
+  height: min(100vw, 100vh); /* Match height to width for a perfect square */
+
+  /* Center the canvas */
   margin: 0 auto;
 }
+
+
+
 
 
