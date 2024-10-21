@@ -16,7 +16,15 @@ export default class {
   initListeners () {
     this.btn.events.on('click', () => {
       this.events.emit('start')
-    })
+    });
+
+
+    // Add a keydown event listener for the spacebar
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {  // Check if the pressed key is Space
+        this.events.emit('start');
+      }
+    });
   }
 
   render () {

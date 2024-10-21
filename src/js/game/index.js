@@ -91,6 +91,7 @@ export default class Game {
       if(e.keyCode === KEYBOARD.RIGHT || e.keyCode === KEYBOARD.LEFT) {
         this.player.direction.x = 0
         // move right
+        console.log('Player right edge:', this.player.x + this.player.width, 'Canvas width:', this.canvas.width);
         if (e.keyCode === KEYBOARD.RIGHT && this.player.x + this.player.width < this.canvas.width) this.player.direction.x = 1
         // move left
         if (e.keyCode === KEYBOARD.LEFT && this.player.x > 0) this.player.direction.x = -1
@@ -256,8 +257,8 @@ export default class Game {
   }
 
   resume () {
-    this.gameState = STATE.PLAYING
-    this.music.play()
+    this.gameState = STATE.PLAYING;
+    this.music.play();
   }
 
   reset() {

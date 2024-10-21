@@ -36,7 +36,6 @@ export default class Assets {
       audio.onerror = err => {
         reject(err)
       }
-      // audio.load()
     })
   }
 

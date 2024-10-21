@@ -1,54 +1,77 @@
 class Canvas {
-  constructor ({ el }) {
-    this.el = document.querySelector(el)
-    this.ctx = this.el.getContext('2d')
+  constructor({ el }) {
+    this.el = el;
+    this.logicalWidth = 1000;
+    this.logicalHeight = 1000;
+    this.ctx = this.el.getContext('2d');
+    
+    // Set the logical size
+    this.el.width = this.logicalWidth; // Use this.logicalWidth
+    this.el.height = this.logicalHeight; // Use this.logicalHeight
 
-    this.el.width = this.width
-    this.el.height = this.height
+    // Initialize resize logic
+    // this.resizeCanvas();
+
+    // Handle window resizing
+    // window.addEventListener('resize', () => this.resizeCanvas());
   }
 
-  get width () {
-    return window.innerWidth
+  get width() {
+    return this.el.width;
   }
 
-  get height () {
-    return window.innerHeight
+  get height() {
+    return this.el.height;
   }
 
   fullscreen() {
-    if(!document.fullscreenElement) {
+    if (!document.fullscreenElement) {
       if (this.el.requestFullscreen) {
-        this.el.requestFullscreen()
+        this.el.requestFullscreen();
       } else if (this.el.mozRequestFullScreen) { /* Firefox */
-        this.el.mozRequestFullScreen()
+        this.el.mozRequestFullScreen();
       } else if (this.el.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
-        this.el.webkitRequestFullscreen()
+        this.el.webkitRequestFullscreen();
       } else if (this.el.msRequestFullscreen) { /* IE/Edge */
-        this.el.msRequestFullscreen()
+        this.el.msRequestFullscreen();
       }
     } else {
       if (document.exitFullscreen) {
-        document.exitFullscreen()
+        document.exitFullscreen();
       } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen()
+        document.mozCancelFullScreen();
       } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen()
+        document.webkitExitFullscreen();
       } else if (document.msExitFullscreen) {
-        document.msExitFullscreen()
+        document.msExitFullscreen();
       }
     }
   }
 
-  clear () {
-    this.ctx.clearRect(0, 0, this.width, this.height)
+  clear() {
+    this.ctx.clearRect(0, 0, this.width, this.height);
   }
 }
 
-// access canvas
-export let canvas
+// Access canvas
+export let canvas;
 
 // init canvas
-export function initCanvas(...args) {
-  canvas = new Canvas(...args)
-  return canvas
+export function initCanvas({ el }) {
+  // Get the canvas element by selector
+  const canvasElement = document.querySelector(el);
+  
+  // Set up the canvas with a fixed logical size
+  const logicalWidth = 1000;
+  const logicalHeight = 1000;
+
+  canvas = new Canvas({
+    el: canvasElement,
+    logicalWidth,
+    logicalHeight,
+  });
+
+  // Return the initialized canvas
+  return canvas;
 }
+
