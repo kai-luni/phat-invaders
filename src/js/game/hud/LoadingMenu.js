@@ -1,5 +1,5 @@
 import { canvas } from '../Canvas.js'
-import { Title } from './elements.js'
+import { Title } from './elements/Title.js';
 
 export default class {
   constructor () {

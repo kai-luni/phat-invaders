@@ -1,6 +1,8 @@
 import { canvas } from '../Canvas.js'
 import Events from '../Events.js'
-import { Button, Text, Title } from './elements.js'
+import { Button } from './elements/Button.js';
+import { Text } from './elements/Text.js';
+import { Title } from './elements/Title.js';
 
 export default class {
   constructor () {
