@@ -1,4 +1,4 @@
-import { canvas } from '../Canvas'
+import { canvas } from '../Canvas.js'
 
 export default class GameObject {
   /**

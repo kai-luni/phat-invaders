@@ -1,4 +1,4 @@
-import { canvas } from '../../Canvas'
+import { canvas } from '../../Canvas.js'
 
 export default class Text {
   constructor ({ text = 'Text', x = 50, y = 50, color = '#fff', align = 'center' }) {

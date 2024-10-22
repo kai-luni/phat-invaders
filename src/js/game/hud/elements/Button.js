@@ -1,5 +1,5 @@
-import { canvas } from '../../Canvas'
-import Events from '../../Events'
+import { canvas } from '../../Canvas.js'
+import Events from '../../Events.js'
 
 export default class Button {
   constructor ({ text = 'Button', x = 50, y = 50, color = '#ba55ad', textColor = '#fff' }) {

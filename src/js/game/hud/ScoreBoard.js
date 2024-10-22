@@ -1,5 +1,5 @@
-import { canvas } from '../Canvas'
-import { Text } from './elements'
+import { canvas } from '../Canvas.js'
+import { Text } from './elements.js'
 
 export default class {
   constructor () {
