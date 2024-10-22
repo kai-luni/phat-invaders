@@ -1,6 +1,6 @@
 // Assets.js
 import gameMusic from '../../assets/spaceinvaders1.mpeg';
-import looseSound from '../../assets/explosion.wav';
+import looseSound from '../../assets/explosion.mp3';
 import enemyTexture from '../../assets/enemy.png';
 import killSound from '../../assets/invaderkilled.wav';
 import playerTexture from '../../assets/player.png';
