@@ -2,12 +2,12 @@ import { initCanvas } from './Canvas.js'
 import Assets from './Assets.js'
 import Enemy  from './gameObjects/Enemy.js'
 import Player from './gameObjects/Player.js'
-import { PauseMenu } from './hud/PauseMenu.js';
-import { LoadingMenu } from './hud/LoadingMenu.js';
-import { WelcomeMenu } from './hud/WelcomeMenu.js';
-import { LostMenu } from './hud/LostMenu.js';
-import { WonMenu } from './hud/WonMenu.js';
-import { ScoreBoard } from './hud/ScoreBoard.js';
+import PauseMenu from './hud/PauseMenu.js';
+import LoadingMenu from './hud/LoadingMenu.js';
+import WelcomeMenu from './hud/WelcomeMenu.js';
+import LostMenu from './hud/LostMenu.js';
+import WonMenu from './hud/WonMenu.js';
+import ScoreBoard from './hud/ScoreBoard.js';
 
 
 const KEYBOARD = {

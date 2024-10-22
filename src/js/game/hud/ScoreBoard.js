@@ -1,9 +1,7 @@
 import { canvas } from '../Canvas.js'
-import { Button } from './elements/Button.js';
-import { Text } from './elements/Text.js';
-import { Title } from './elements/Title.js';
+import Text from './elements/Text.js';
 
-export default class {
+export default class ScoreBoard {
   constructor () {
     this.fontSize = 16
     this.score = 0
