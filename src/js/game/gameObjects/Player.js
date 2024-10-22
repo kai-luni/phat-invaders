@@ -1,5 +1,5 @@
-import GameObject from './GameObject'
-import Missile from './Missile'
+import GameObject from './GameObject.js'
+import Missile from './Missile.js'
 
 export default class Player extends GameObject {
   constructor (...args) {
