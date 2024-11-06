@@ -9,7 +9,7 @@
     "rimraf": "^2.6.3"
   },
   "scripts": {
-    "dev": "parcel src/*.html",
+    "dev": "parcel src/*.html --port 3002",
     "prebuild": "npm run cleanup",
     "build": "parcel build src/*.html",
     "cleanup": "rimraf .cache dist"
