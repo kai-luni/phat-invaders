@@ -146,8 +146,8 @@ export default class Game {
     return new Player({
       x: this.canvas.width / 2,
       y: this.canvas.height - 100,
-      width: 50,
-      height: 50,
+      width: 96,
+      height: 96,
       texture: this.assets.playerTexture,
       assets: this.assets
     })

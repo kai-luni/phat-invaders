@@ -17,7 +17,7 @@ body {
 canvas#game {
   display: block;
   background-color: var(--bg-color);
-  background-image: url('../assets/background.jpg');
+  background-image: url('../assets/graphics/space.jpg');
   
   /* Maintain aspect ratio and responsiveness */
   background-size: cover;

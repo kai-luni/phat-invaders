@@ -1,9 +1,9 @@
 // Assets.js
-import gameMusic from '../../assets/spaceinvaders1.mpeg';
+import gameMusic from '../../assets/audio/happy_christmas_background_music_small.mp3';
 import looseSound from '../../assets/explosion.mp3';
-import enemyTexture from '../../assets/enemy.png';
+import enemyTexture from '../../assets/graphics/grinch_1.png';
 import killSound from '../../assets/invaderkilled.wav';
-import playerTexture from '../../assets/player.png';
+import playerTexture from '../../assets/graphics/santa.png';
 import fireSound from '../../assets/shoot.wav';
 
 export default class Assets {
