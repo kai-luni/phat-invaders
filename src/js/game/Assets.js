@@ -2,6 +2,7 @@
 import gameMusic from '../../assets/audio/happy_christmas_background_music_small.mp3';
 import looseSound from '../../assets/explosion.mp3';
 import enemyTexture from '../../assets/graphics/grinch_1.png';
+import blockTexture from '../../assets/graphics/kugel_rot.png';
 import killSound from '../../assets/invaderkilled.wav';
 import playerTexture from '../../assets/graphics/santa.png';
 import fireSound from '../../assets/shoot.wav';
@@ -24,6 +25,9 @@ export default class Assets {
     this.enemyTexture = new Image();
     this.enemyTexture.src = enemyTexture;  // Set the image source
 
+    this.blockTexture = new Image();
+    this.blockTexture.src = blockTexture;  // Set the image source
+
     this.playerTexture = new Image();
     this.playerTexture.src = playerTexture;  // Set the image source
 
@@ -37,6 +41,7 @@ export default class Assets {
 
     // Paths for textures
     this.textureFiles = {
+      block: blockTexture,
       enemy: enemyTexture,
       player: playerTexture,
     };

@@ -1,5 +1,6 @@
 import { initCanvas } from './Canvas.js'
 import Assets from './Assets.js'
+import Block  from './gameObjects/Block.js'
 import Enemy  from './gameObjects/Enemy.js'
 import Player from './gameObjects/Player.js'
 import PauseMenu from './hud/PauseMenu.js';
@@ -45,6 +46,9 @@ export default class Game {
 
     // game state
     this.gameState = STATE.LOADING
+
+    // blocks
+    this.blocks = this.generateBlocks()
 
     // player
     this.player = this.generatePlayer()
@@ -174,6 +178,23 @@ export default class Game {
     return enemies
   }
 
+  generateBlocks() {
+    let blocks = []
+    for (let i = 0; i < 37; i++) {
+      for (let j = 0; j < 6; j++) {
+        blocks.push(new Block({
+          x: (this.canvas.width / 8) + (i * 21),
+          y: (this.canvas.width / 8)*5 + (j * 21), // generates a random number beween 50 & 250
+          width: 20,
+          height: 20,
+          texture: this.assets.blockTexture,
+          assets: this.assets
+        }))
+      }
+    }
+    return blocks
+  }
+
   renderGame () {
     // first clear the canvas
     this.canvas.clear()
@@ -200,6 +221,9 @@ export default class Game {
         this.player.render()
         this.enemies.forEach(enemy => {
           enemy.render()
+        })
+        this.blocks.forEach(block => {
+          block.render()
         })
         break
     }
@@ -232,6 +256,7 @@ export default class Game {
   }
 
   checkCollisions () {
+    let blocksHit = []
     let enemiesHit = []
     let missilesHit = []
 
@@ -250,6 +275,19 @@ export default class Game {
       if (enemy.y + enemy.height > this.player.y) this.loose()
     })
 
+    this.blocks.forEach(block => {
+      this.player.missiles.forEach(missile => {
+        // if a player missile reaches an enemy, they both disappear
+        if (missile.x > block.x && missile.x < block.x + block.width && missile.y > block.y && missile.y < block.y + block.height) {
+          block.die()
+          this.scoreBoard.incrementScore()
+          blocksHit.push(block)
+          missilesHit.push(missile)
+        }
+      })
+    })
+
+    this.blocks = this.blocks.filter(block => !blocksHit.includes(block))
     this.enemies = this.enemies.filter(enemy => !enemiesHit.includes(enemy))
     this.player.missiles = this.player.missiles.filter(missile => !missilesHit.includes(missile))
 
@@ -268,10 +306,11 @@ export default class Game {
   }
 
   reset() {
-    this.player = this.generatePlayer()
-    this.enemies = this.generateEnemies(this.nbEnemies)
-    this.music.pause()
-    this.music.currentTime = 0
+    this.player = this.generatePlayer();
+    this.blocks = this.generateBlocks();
+    this.enemies = this.generateEnemies(this.nbEnemies);
+    this.music.pause();
+    this.music.currentTime = 0;
   }
 
   loose () {
