@@ -230,23 +230,38 @@ export default class Game {
   }
 
   generateBlocks() {
+    const layout = [
+      "0000011111001100110111110011111100000",
+      "0000011111101100110111111011111100000",
+      "0000011001101100110110011000110000000",
+      "0000011111101111110111111000110000000",
+      "0000011111001111110111111000110000000",
+      "0000011000001100110110011000110000000",
+      "0000011000001100110110011000110000000",
+      "0000011000001100110110011000110000000",
+    ];
     let blocks = [];
-    for (let i = 0; i < 37; i++) {
-      for (let j = 0; j < 6; j++) {
-        blocks.push(
-          new Block({
-            x: (this.canvas.width / 8) + (i * 21),
-            y: (this.canvas.width / 8) * 5 + (j * 21),
-            width: 20,
-            height: 20,
-            texture: this.assets.blockTexture,
-            assets: this.assets,
-          })
-        );
-      }
-    }
+    const blockSize = 20; // Width and height of each block
+  
+    layout.forEach((row, rowIndex) => {
+      row.split("").forEach((cell, colIndex) => {
+        if (cell === "1") {
+          blocks.push(
+            new Block({
+              x: (this.canvas.width / 8) + (colIndex * (blockSize + 1)), // Add 1 for spacing
+              y: (this.canvas.width / 8) * 5 + (rowIndex * (blockSize + 1)),
+              width: blockSize,
+              height: blockSize,
+              texture: this.assets.blockTexture,
+              assets: this.assets,
+            })
+          );
+        }
+      });
+    });
+  
     return blocks;
-  }
+  }  
 
   renderGame() {
     // First clear the canvas

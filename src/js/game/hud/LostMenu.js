@@ -33,7 +33,7 @@ export default class LostMenu {
 
       if (response.ok) {
         alert('High score submitted successfully!');
-        this.events.emit('start'); // Emit an event to restart the game
+        //this.events.emit('start'); // Emit an event to restart the game
       } else {
         alert('Failed to submit high score. Try again!');
       }
