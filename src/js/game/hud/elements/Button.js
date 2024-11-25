@@ -1,39 +1,62 @@
-import { canvas } from '../../Canvas.js'
-import Events from '../../Events.js'
+import { canvas } from '../../Canvas.js';
+import Events from '../../Events.js';
 
 export default class Button {
-  constructor ({ text = 'Button', x = 50, y = 50, color = '#ba55ad', textColor = '#fff' }) {
-    this.fontSize = 16
-    this.width = (text.length * this.fontSize) + (this.fontSize * 2)
-    this.height = this.fontSize * 3
+  constructor({ text = 'Button', x = 50, y = 50, color = '#ba55ad', textColor = '#fff' }) {
+    this.fontSize = 16;
+    this.width = (text.length * this.fontSize) + (this.fontSize * 2);
+    this.height = this.fontSize * 3;
 
-    this.text = text
-    this.x = x - this.width / 2 // so that origin is in the middle
-    this.y = y
-    this.color = color
-    this.textColor = textColor
+    this.text = text;
+    this.x = x - this.width / 2; // Center the button horizontally at the given x
+    this.y = y;
+    this.color = color;
+    this.textColor = textColor;
 
-    this.events = new Events()
-    this.initListeners()
+    this.events = new Events();
+    this.initListeners();
   }
 
-  initListeners () {
-    canvas.el.addEventListener('click', e => {
-      if (e.x > this.x && e.x < this.x + this.width && e.y > this.y && e.y < this.y + this.height) {
-        this.events.emit('click')
+  /**
+   * Scales mouse coordinates from screen space to canvas logical space.
+   */
+  getMousePosition(event) {
+    const rect = canvas.el.getBoundingClientRect(); // Get the actual size of the canvas on the screen
+    const scaleX = canvas.el.width / rect.width;   // Horizontal scale factor
+    const scaleY = canvas.el.height / rect.height; // Vertical scale factor
+
+    return {
+      x: (event.clientX - rect.left) * scaleX, // Translate and scale the x coordinate
+      y: (event.clientY - rect.top) * scaleY,  // Translate and scale the y coordinate
+    };
+  }
+
+  /**
+   * Initialize event listeners for the button.
+   */
+  initListeners() {
+    canvas.el.addEventListener('click', (e) => {
+      const { x, y } = this.getMousePosition(e); // Scale mouse position to logical space
+
+      // Check if the click is within the button bounds
+      if (x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height) {
+        this.events.emit('click');
       }
-    })
+    });
   }
 
-  render () {
-    // draw the button
-    canvas.ctx.fillStyle = this.color
-    canvas.ctx.fillRect(this.x, this.y, this.width, this.height)
+  /**
+   * Render the button on the canvas.
+   */
+  render() {
+    // Draw the button rectangle
+    canvas.ctx.fillStyle = this.color;
+    canvas.ctx.fillRect(this.x, this.y, this.width, this.height);
 
-    // draw the text
-    canvas.ctx.font = `${this.fontSize}px VT323`
-    canvas.ctx.fillStyle = this.textColor
-    canvas.ctx.textAlign = 'center'
-    canvas.ctx.fillText(this.text, this.x + this.width / 2, this.y + this.fontSize * 1.9)
+    // Draw the button text
+    canvas.ctx.font = `${this.fontSize}px VT323`;
+    canvas.ctx.fillStyle = this.textColor;
+    canvas.ctx.textAlign = 'center';
+    canvas.ctx.fillText(this.text, this.x + this.width / 2, this.y + this.fontSize * 1.9);
   }
 }
