@@ -362,18 +362,33 @@ export default class Game {
     });
 
     this.blocks.forEach((block) => {
+      // Check if player's missiles hit the block
       this.player.missiles.forEach((missile) => {
-        // If a player missile hits a block, they both disappear
         if (
           missile.x > block.x &&
           missile.x < block.x + block.width &&
           missile.y > block.y &&
           missile.y < block.y + block.height
         ) {
-          block.die();
-          blocksHit.push(block);
-          missilesHit.push(missile);
+          block.die(); // Destroy the block
+          blocksHit.push(block); // Mark the block for removal
+          missilesHit.push(missile); // Mark the missile for removal
         }
+      });
+    
+      // Check if enemy missiles hit the block
+      this.enemies.forEach((enemy) => {
+        enemy.missiles.forEach((missile) => {
+          if (
+            missile.x > block.x &&
+            missile.x < block.x + block.width &&
+            missile.y > block.y &&
+            missile.y < block.y + block.height
+          ) {
+            missilesHit.push(missile); // Mark the missile for removal
+            // The block remains intact
+          }
+        });
       });
     });
 
