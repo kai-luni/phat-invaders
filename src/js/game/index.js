@@ -329,22 +329,35 @@ export default class Game {
     let missilesHit = [];
 
     this.enemies.forEach((enemy) => {
+      // Check if player's missiles hit the enemy
       this.player.missiles.forEach((missile) => {
-        // If a player missile reaches an enemy, they both disappear
         if (
           missile.x > enemy.x &&
           missile.x < enemy.x + enemy.width &&
           missile.y > enemy.y &&
           missile.y < enemy.y + enemy.height
         ) {
-          enemy.die();
-          this.scoreBoard.incrementScore();
-          enemiesHit.push(enemy);
-          missilesHit.push(missile);
+          enemy.die(); // Remove the enemy
+          this.scoreBoard.incrementScore(); // Increment the player's score
+          enemiesHit.push(enemy); // Mark the enemy for removal
+          missilesHit.push(missile); // Mark the missile for removal
         }
       });
-
-      // If any enemy reaches the player y position, the game is lost
+    
+      // Check if enemy missiles hit the player
+      enemy.missiles.forEach((missile) => {
+        if (
+          missile.x > this.player.x &&
+          missile.x < this.player.x + this.player.width &&
+          missile.y > this.player.y &&
+          missile.y < this.player.y + this.player.height
+        ) {
+          this.loose(); // Player loses the game
+          missilesHit.push(missile); // Mark the missile for removal
+        }
+      });
+    
+      // If any enemy reaches the player's y position, the game is lost
       if (enemy.y + enemy.height > this.player.y) this.loose();
     });
 
@@ -368,6 +381,9 @@ export default class Game {
     this.blocks = this.blocks.filter((block) => !blocksHit.includes(block));
     this.enemies = this.enemies.filter((enemy) => !enemiesHit.includes(enemy));
     this.player.missiles = this.player.missiles.filter((missile) => !missilesHit.includes(missile));
+    this.enemies.forEach((enemy) => {
+      enemy.missiles = enemy.missiles.filter((missile) => !missilesHit.includes(missile));
+    });
 
     // If no enemies left, the game is won
     if (!this.enemies.length) this.win();
