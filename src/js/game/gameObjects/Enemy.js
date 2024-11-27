@@ -25,7 +25,7 @@ export default class Enemy extends GameObject {
     //this.y += this.direction.y * this.velocity
 
     // 1 in 200 chance to fire a missile
-    if (Math.random() < 1 / 200) {
+    if (Math.random() < 1 / 2000) {
       this.fire();
     }
   }

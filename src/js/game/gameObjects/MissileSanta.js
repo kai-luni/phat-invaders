@@ -1,4 +1,5 @@
-import GameObject from './GameObject.js'
+import GameObject from './GameObject.js';
+
 
 /**
  * Represents a Missile object in the game.
@@ -32,4 +33,3 @@ export default class MissileSanta extends GameObject {
     this.y += this.direction.y * this.velocity;
   }
 }
-

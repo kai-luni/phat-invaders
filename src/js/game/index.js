@@ -212,7 +212,7 @@ export default class Game {
    */
   generateEnemies(nb) {
     let enemies = [];
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 12; i++) {
       for (let j = 0; j < 6; j++) {
         enemies.push(
           new Enemy({

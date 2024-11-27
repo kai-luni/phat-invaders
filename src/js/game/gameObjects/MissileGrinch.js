@@ -1,4 +1,5 @@
 import GameObject from './GameObject.js'
+import Assets from '../Assets.js';
 
 /**
  * Represents a Missile object in the game.
@@ -22,6 +23,9 @@ export default class MissileGrinch extends GameObject {
 
     this.direction = { x: 0, y: directionY }; // Default to moving up
     this.velocity = velocity; // Default speed of the missile
+
+    this.assets = new Assets();
+    this.texture = this.assets.enemyRocketTexture;
   }
 
   /**
@@ -31,5 +35,12 @@ export default class MissileGrinch extends GameObject {
     this.x += this.direction.x * this.velocity;
     this.y += this.direction.y * this.velocity;
   }
+
+    /**
+   * Render the missile with a graphic.
+   */
+    render() {
+      this.canvas.ctx.drawImage(this.texture, this.x, this.y, this.width, this.height);
+    }
 }
 
