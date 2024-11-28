@@ -53,7 +53,7 @@ export default class Game {
     this.player = this.generatePlayer();
 
     // enemies
-    this.enemies = this.generateEnemies(this.nbEnemies);
+    this.enemies = this.generateEnemies();
     this.enemiesChangeDirection = false;
 
     // menus
@@ -198,9 +198,9 @@ export default class Game {
   generatePlayer() {
     return new Player({
       x: this.canvas.width / 2,
-      y: this.canvas.height - 100,
-      width: 96,
-      height: 96,
+      y: this.canvas.height - 48,
+      width: 64,
+      height: 64,
       texture: this.assets.playerTexture,
       assets: this.assets,
     });
@@ -210,16 +210,16 @@ export default class Game {
    * Generates a given number of enemies
    * @param {Integer} nb - the number of enemies to be created
    */
-  generateEnemies(nb) {
+  generateEnemies() {
     let enemies = [];
     for (let i = 0; i < 12; i++) {
       for (let j = 0; j < 6; j++) {
         enemies.push(
           new Enemy({
-            x: (this.canvas.width / 8) + (i * 54),
-            y: 64 + (j * 54),
-            width: 50,
-            height: 50,
+            x: (this.canvas.width / 32) + (i * 44),
+            y: 64 + (j * 44),
+            width: 40,
+            height: 40,
             texture: this.assets.enemyTexture,
             assets: this.assets,
           })
@@ -305,11 +305,29 @@ export default class Game {
     }
   }
 
+  /**
+   * Updates the position and direction of enemies.
+   * - Moves each enemy and checks if they should change direction.
+   * - Triggers an additional behavior every 10 seconds.
+   */
   updateEnemies() {
     let changeDirection = false;
+
+    // Determine if 10 seconds have passed
+    const currentTime = Date.now();
+    const triggerSpecialAction = this.lastSpecialActionTime 
+      ? currentTime - this.lastSpecialActionTime >= 10000 
+      : true;
+
+    if (triggerSpecialAction) {
+      this.lastSpecialActionTime = currentTime; // Reset the timer
+    }
+
     this.enemies.forEach((enemy) => {
-      enemy.move(this.enemiesChangeDirection);
-      // If any enemy reaches the edges of the game container, change enemies direction
+      // Pass the condition for every 10 seconds to the move method
+      enemy.move(this.enemiesChangeDirection, triggerSpecialAction);
+
+      // If any enemy reaches the edges of the game container, change direction
       if (enemy.x < 0 || enemy.x + enemy.width > this.canvas.width) changeDirection = true;
     });
 
@@ -332,10 +350,14 @@ export default class Game {
       // Check if player's missiles hit the enemy
       this.player.missiles.forEach((missile) => {
         if (
-          missile.x > enemy.x &&
+          (missile.x > enemy.x &&
           missile.x < enemy.x + enemy.width &&
           missile.y > enemy.y &&
-          missile.y < enemy.y + enemy.height
+          missile.y < enemy.y + enemy.height) ||
+          ((missile.x+missile.width) > enemy.x &&
+          (missile.x+missile.width) < enemy.x + enemy.width &&
+            (missile.y+missile.height) > enemy.y &&
+            (missile.y+missile.height) < enemy.y + enemy.height)
         ) {
           enemy.die(); // Remove the enemy
           this.scoreBoard.incrementScore(); // Increment the player's score
@@ -350,7 +372,11 @@ export default class Game {
           missile.x > this.player.x &&
           missile.x < this.player.x + this.player.width &&
           missile.y > this.player.y &&
-          missile.y < this.player.y + this.player.height
+          missile.y < this.player.y + this.player.height ||
+          ((missile.x+missile.width) > this.player.x &&
+          (missile.x+missile.width) < this.player.x + this.player.width &&
+            (missile.y+missile.height) > this.player.y &&
+            (missile.y+missile.height) < this.player.y + this.player.height)
         ) {
           this.loose(); // Player loses the game
           missilesHit.push(missile); // Mark the missile for removal
@@ -368,7 +394,11 @@ export default class Game {
           missile.x > block.x &&
           missile.x < block.x + block.width &&
           missile.y > block.y &&
-          missile.y < block.y + block.height
+          missile.y < block.y + block.height ||
+          ((missile.x+missile.width) > block.x &&
+          (missile.x+missile.width) < block.x + block.width &&
+            (missile.y+missile.height) > block.y &&
+            (missile.y+missile.height) < block.y + block.height)
         ) {
           block.die(); // Destroy the block
           blocksHit.push(block); // Mark the block for removal
@@ -383,7 +413,11 @@ export default class Game {
             missile.x > block.x &&
             missile.x < block.x + block.width &&
             missile.y > block.y &&
-            missile.y < block.y + block.height
+            missile.y < block.y + block.height ||
+            ((missile.x+missile.width) > block.x &&
+            (missile.x+missile.width) < block.x + block.width &&
+              (missile.y+missile.height) > block.y &&
+              (missile.y+missile.height) < block.y + block.height)
           ) {
             missilesHit.push(missile); // Mark the missile for removal
             // The block remains intact
