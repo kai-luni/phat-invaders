@@ -63,7 +63,7 @@ export default class Enemy extends GameObject {
   }
 
   /**
-   * Updates the enemy's position and randomly fires missiles.
+   * Updates the enemy's position
    * @param {boolean} changeDirection - Indicates whether the enemy should change direction.
    * @param {boolean} goDown - Go down in the direction of Santa
    */
@@ -79,11 +79,6 @@ export default class Enemy extends GameObject {
 
     // Update position based on direction and velocity
     this.x += this.direction.x * this.velocity;
-
-    // Random chance to fire a missile
-    if (Math.random() < 1 / 4000) {
-      this.fire();
-    }
   }
 
   /**
@@ -97,7 +92,7 @@ export default class Enemy extends GameObject {
       width: 10,
       height: 20,
       directionY: 1,      // Enemy missiles move downward
-      velocity: 5,
+      velocity: 10,
       assets: this.assets, // Pass assets if missile needs sounds or textures
     });
 

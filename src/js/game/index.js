@@ -337,6 +337,12 @@ export default class Game {
       // If any enemy reaches the edges of the game container, change direction
       if (enemy.x < 0 || enemy.x + enemy.width > this.canvas.width) changeDirection = true;
     });
+    // A random enemy is shooting
+    if (Math.random() < 1 / 32 && this.enemies.length > 0) {
+      // Choose a random enemy
+      const randomEnemy = this.enemies[Math.floor(Math.random() * this.enemies.length)];
+      randomEnemy.fire();
+    }
 
     // Next update loop, are they going to change direction?
     this.enemiesChangeDirection = changeDirection;
@@ -354,125 +360,144 @@ export default class Game {
     requestAnimationFrame(this.update.bind(this));
   }
 
-/**
- * Checks for collisions between game objects.
- * 
- * This method performs the following collision checks:
- * 
- * - **Player Missiles vs. Enemies**: Destroys both the missile and the enemy, increments the score.
- * - **Enemy Missiles vs. Player**: Ends the game by calling `this.loose()`.
- * - **Player Missiles vs. Blocks**: Destroys both the missile and the block.
- * - **Enemy Missiles vs. Blocks**: Destroys the missile; the block remains intact.
- * - **Enemies vs. Blocks**: Ends the game by calling `this.loose()`.
- * - **Enemies Reaching Player**: Ends the game by calling `this.loose()`.
- * 
- * After processing collisions, it removes destroyed objects from their respective arrays.
- * If all enemies are destroyed, the game is won by calling `this.win()`.
- */
-checkCollisions() {
-  let blocksHit = [];
-  let enemiesHit = [];
-  let missilesHit = [];
+  /**
+   * Checks for collisions between game objects.
+   * 
+   * This method performs the following collision checks:
+   * 
+   * - **Player Missiles vs. Enemies**: Destroys both the missile and the enemy, increments the score.
+   * - **Enemy Missiles vs. Player**: Ends the game by calling `this.loose()`.
+   * - **Player Missiles vs. Blocks**: Destroys both the missile and the block.
+   * - **Enemy Missiles vs. Blocks**: Destroys both the missile and the block.
+   * - **Enemies vs. Blocks**: Ends the game by calling `this.loose()`.
+   * - **Enemies Reaching Player**: Ends the game by calling `this.loose()`.
+   * - **Player Missiles vs. Enemy Missiles**: Destroys both missiles.
+   * 
+   * After processing collisions, it removes destroyed objects from their respective arrays.
+   * If all enemies are destroyed, the game is won by calling `this.win()`.
+   */
+  checkCollisions() {
+    let blocksHit = [];
+    let enemiesHit = [];
+    let playerMissilesHit = [];
+    let enemyMissilesHit = [];
 
-  // Check collisions between player missiles and enemies
-  this.enemies.forEach((enemy) => {
-    this.player.missiles.forEach((missile) => {
-      if (
-        missile.x < enemy.x + enemy.width &&
-        missile.x + missile.width > enemy.x &&
-        missile.y < enemy.y + enemy.height &&
-        missile.y + missile.height > enemy.y
-      ) {
-        enemy.die();
-        this.scoreBoard.incrementScore();
-        enemiesHit.push(enemy);
-        missilesHit.push(missile);
-      }
+    // Check collisions between player missiles and enemies
+    this.enemies.forEach((enemy) => {
+      this.player.missiles.forEach((missile) => {
+        if (
+          missile.x < enemy.x + enemy.width &&
+          missile.x + missile.width > enemy.x &&
+          missile.y < enemy.y + enemy.height &&
+          missile.y + missile.height > enemy.y
+        ) {
+          enemy.die();
+          this.scoreBoard.incrementScore();
+          enemiesHit.push(enemy);
+          playerMissilesHit.push(missile);
+        }
+      });
     });
-  });
 
-  // Check collisions between enemy missiles and player
-  this.enemies.forEach((enemy) => {
-    enemy.missiles.forEach((missile) => {
-      if (
-        missile.x < this.player.x + this.player.width &&
-        missile.x + missile.width > this.player.x &&
-        missile.y < this.player.y + this.player.height &&
-        missile.y + missile.height > this.player.y
-      ) {
-        this.loose();
-        missilesHit.push(missile);
-      }
-    });
-  });
-
-  // Check collisions between player's missiles and blocks
-  this.blocks.forEach((block) => {
-    this.player.missiles.forEach((missile) => {
-      if (
-        missile.x < block.x + block.width &&
-        missile.x + missile.width > block.x &&
-        missile.y < block.y + block.height &&
-        missile.y + missile.height > block.y
-      ) {
-        block.die();
-        blocksHit.push(block);
-        missilesHit.push(missile);
-      }
-    });
-  });
-
-  // Check collisions between enemy missiles and blocks
-  this.blocks.forEach((block) => {
+    // Check collisions between enemy missiles and player
     this.enemies.forEach((enemy) => {
       enemy.missiles.forEach((missile) => {
+        if (
+          missile.x < this.player.x + this.player.width &&
+          missile.x + missile.width > this.player.x &&
+          missile.y < this.player.y + this.player.height &&
+          missile.y + missile.height > this.player.y
+        ) {
+          this.loose();
+          enemyMissilesHit.push(missile);
+        }
+      });
+    });
+
+    // Check collisions between player's missiles and blocks
+    this.blocks.forEach((block) => {
+      this.player.missiles.forEach((missile) => {
         if (
           missile.x < block.x + block.width &&
           missile.x + missile.width > block.x &&
           missile.y < block.y + block.height &&
           missile.y + missile.height > block.y
         ) {
-          missilesHit.push(missile);
-          // The block remains intact
+          block.die();
+          blocksHit.push(block);
+          playerMissilesHit.push(missile);
         }
       });
     });
-  });
 
-  // Check collisions between enemies and blocks
-  this.blocks.forEach((block) => {
+    // Check collisions between enemy missiles and blocks
+    this.blocks.forEach((block) => {
+      this.enemies.forEach((enemy) => {
+        enemy.missiles.forEach((missile) => {
+          if (
+            missile.x < block.x + block.width &&
+            missile.x + missile.width > block.x &&
+            missile.y < block.y + block.height &&
+            missile.y + missile.height > block.y
+          ) {
+            enemyMissilesHit.push(missile);
+            blocksHit.push(block);
+          }
+        });
+      });
+    });
+
+    // Check collisions between enemies and blocks
+    this.blocks.forEach((block) => {
+      this.enemies.forEach((enemy) => {
+        if (
+          enemy.x < block.x + block.width &&
+          enemy.x + enemy.width > block.x &&
+          enemy.y < block.y + block.height &&
+          enemy.y + enemy.height > block.y
+        ) {
+          this.loose();
+        }
+      });
+    });
+
+    // Check collisions between player missiles and enemy missiles
+    this.player.missiles.forEach((playerMissile) => {
+      this.enemies.forEach((enemy) => {
+        enemy.missiles.forEach((enemyMissile) => {
+          if (
+            playerMissile.x < enemyMissile.x + enemyMissile.width &&
+            playerMissile.x + playerMissile.width > enemyMissile.x &&
+            playerMissile.y < enemyMissile.y + enemyMissile.height &&
+            playerMissile.y + playerMissile.height > enemyMissile.y
+          ) {
+            playerMissilesHit.push(playerMissile);
+            enemyMissilesHit.push(enemyMissile);
+          }
+        });
+      });
+    });
+
+    // Check if any enemy reaches the player's y position
     this.enemies.forEach((enemy) => {
-      if (
-        enemy.x < block.x + block.width &&
-        enemy.x + enemy.width > block.x &&
-        enemy.y < block.y + block.height &&
-        enemy.y + enemy.height > block.y
-      ) {
+      if (enemy.y + enemy.height > this.player.y) {
         this.loose();
       }
     });
-  });
 
-  // Check if any enemy reaches the player's y position
-  this.enemies.forEach((enemy) => {
-    if (enemy.y + enemy.height > this.player.y) {
-      this.loose();
+    // Remove hit entities
+    this.blocks = this.blocks.filter((block) => !blocksHit.includes(block));
+    this.enemies = this.enemies.filter((enemy) => !enemiesHit.includes(enemy));
+    this.player.missiles = this.player.missiles.filter((missile) => !playerMissilesHit.includes(missile));
+    this.enemies.forEach((enemy) => {
+      enemy.missiles = enemy.missiles.filter((missile) => !enemyMissilesHit.includes(missile));
+    });
+
+    // If no enemies left, the game is won
+    if (!this.enemies.length) {
+      this.win();
     }
-  });
-
-  // Remove hit entities
-  this.blocks = this.blocks.filter((block) => !blocksHit.includes(block));
-  this.enemies = this.enemies.filter((enemy) => !enemiesHit.includes(enemy));
-  this.player.missiles = this.player.missiles.filter((missile) => !missilesHit.includes(missile));
-  this.enemies.forEach((enemy) => {
-    enemy.missiles = enemy.missiles.filter((missile) => !missilesHit.includes(missile));
-  });
-
-  // If no enemies left, the game is won
-  if (!this.enemies.length) {
-    this.win();
   }
-}
 
   pause() {
     this.changeGameState(STATE.PAUSED);
