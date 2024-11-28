@@ -94,47 +94,40 @@ export default class Game {
   }
 
   initListeners() {
-    // Keyboard event listeners for the game
-    window.addEventListener('keydown', (e) => {
-      // Do nothing if not playing
-      if (this.gameState !== STATE.PLAYING) return;
+    // Initialize keysPressed object
+    this.keysPressed = {};
 
-      // Prevent page from moving on key press
+    window.addEventListener('keydown', (e) => {
       if (Object.values(KEYBOARD).includes(e.keyCode)) e.preventDefault();
 
-      if (e.keyCode === KEYBOARD.RIGHT || e.keyCode === KEYBOARD.LEFT) {
-        this.player.direction.x = 0;
-        // Move right
-        if (e.keyCode === KEYBOARD.RIGHT && this.player.x + this.player.width < this.canvas.width)
-          this.player.direction.x = 1;
-        // Move left
-        if (e.keyCode === KEYBOARD.LEFT && this.player.x > 0) this.player.direction.x = -1;
+      // Update key state
+      this.keysPressed[e.keyCode] = true;
+
+      if (this.gameState !== STATE.PLAYING) return;
+
+      // Handle pause key
+      if (e.keyCode === KEYBOARD.PAUSE && this.gameState !== STATE.PAUSED) {
+        this.pause();
       }
     });
 
     window.addEventListener('keyup', (e) => {
-      // Do nothing if not paused or playing
-      if (this.gameState !== STATE.PLAYING && this.gameState !== STATE.PAUSED) return;
-
-      // Pause
-      if (e.keyCode === KEYBOARD.PAUSE) {
-        if (this.gameState !== STATE.PAUSED) this.pause();
-        else this.resume();
-      }
-
-      // Do nothing if game is not playing
-      if (this.gameState !== STATE.PLAYING) return;
-
-      // Prevent page from moving on key press
       if (Object.values(KEYBOARD).includes(e.keyCode)) e.preventDefault();
 
-      // Stop moving
-      if ((e.keyCode === KEYBOARD.RIGHT || e.keyCode === KEYBOARD.LEFT) && this.player.direction.x)
-        this.player.direction.x = 0;
-      // Fire
-      if (e.keyCode === KEYBOARD.FIRE) this.player.fire();
-      // Fullscreen
-      if (e.keyCode === KEYBOARD.FULLSCREEN) this.canvas.fullscreen();
+      // Update key state
+      this.keysPressed[e.keyCode] = false;
+
+      if (this.gameState !== STATE.PLAYING) return;
+
+      // Handle pause key
+      if (e.keyCode === KEYBOARD.PAUSE && this.gameState === STATE.PAUSED) {
+        this.resume();
+      }
+
+      // Handle fire key
+      if (e.keyCode === KEYBOARD.FIRE) {
+        this.player.fire();
+      }
     });
 
     // Menu event listeners
@@ -249,7 +242,7 @@ export default class Game {
           blocks.push(
             new Block({
               x: (this.canvas.width / 8) + (colIndex * (blockSize + 1)), // Add 1 for spacing
-              y: (this.canvas.width / 8) * 5 + (rowIndex * (blockSize + 1)),
+              y: (this.canvas.width / 32) * 23 + (rowIndex * (blockSize + 1)),
               width: blockSize,
               height: blockSize,
               texture: this.assets.blockTexture,
@@ -297,11 +290,25 @@ export default class Game {
     }
   }
 
-  updateGame() {
+  updateGame(deltaTime) {
     if (this.gameState === STATE.PLAYING) {
-      this.player.move();
+      // Update player direction based on keys pressed
+      this.updatePlayerDirection();
+
+      // Move the player with deltaTime
+      this.player.move(deltaTime);
       this.updateEnemies();
       this.checkCollisions();
+    }
+  }
+
+  updatePlayerDirection() {
+    if (this.keysPressed[KEYBOARD.LEFT]) {
+      this.player.direction.x = -1;
+    } else if (this.keysPressed[KEYBOARD.RIGHT]) {
+      this.player.direction.x = 1;
+    } else {
+      this.player.direction.x = 0;
     }
   }
 
@@ -316,7 +323,7 @@ export default class Game {
     // Determine if 10 seconds have passed
     const currentTime = Date.now();
     const triggerSpecialAction = this.lastSpecialActionTime 
-      ? currentTime - this.lastSpecialActionTime >= 10000 
+      ? currentTime - this.lastSpecialActionTime >= 8000 
       : true;
 
     if (triggerSpecialAction) {
@@ -336,8 +343,14 @@ export default class Game {
   }
 
   update() {
-    this.updateGame();
+    // Calculate deltaTime
+    const now = performance.now();
+    const deltaTime = (now - this.lastFrameTime) / 1000; // Convert to seconds
+    this.lastFrameTime = now;
+  
+    this.updateGame(deltaTime);
     this.renderGame();
+  
     requestAnimationFrame(this.update.bind(this));
   }
 
