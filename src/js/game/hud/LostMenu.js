@@ -12,8 +12,8 @@ export default class LostMenu {
     this.input = { x: canvas.width / 2 - 100, y: canvas.height / 2 - 20, width: 200, height: 30, value: '' }; // Input box
     this.submitButton = new Button({ text: 'Submit High Score', x: canvas.width / 2, y: canvas.height / 2 + 50 });
     this.events = new Events();
+    this.highScore = 0; // Initialize with 0 as default
 
-    // Prepare event handlers but do not bind them yet
     this.onSubmitClick = this.onSubmitClick.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
   }
@@ -21,14 +21,13 @@ export default class LostMenu {
   // Event handler for the submit button click
   async onSubmitClick() {
     const playerName = this.input.value || 'Anonymous'; // Use input value or default to 'Anonymous'
-    const randomScore = Math.floor(Math.random() * 50000 + 1000); // Generate random score
 
     try {
       // POST the high score to the API
       const response = await fetch('https://si-game-highscores-func.azurewebsites.net/api/SaveHighScore', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: playerName, score: randomScore }),
+        body: JSON.stringify({ name: playerName, score: this.highScore }),
       });
 
       if (response.ok) {
@@ -70,6 +69,10 @@ export default class LostMenu {
     window.removeEventListener('keydown', this.onKeyDown);
   }
 
+  setHighScore(score) {
+    this.highScore = score;
+  }
+
   render() {
     // Overlay
     canvas.ctx.fillStyle = '#000000dd';
@@ -80,6 +83,14 @@ export default class LostMenu {
 
     // Instruction text
     this.text1.render();
+
+    // Display high score
+    const highScoreText = new Text({ 
+      text: `Your Score: ${this.highScore}`, 
+      x: canvas.width / 2, 
+      y: canvas.height / 2 - 75 
+    });
+    highScoreText.render();
 
     // Input field
     canvas.ctx.fillStyle = '#ffffff';

@@ -526,6 +526,10 @@ export default class Game {
   loose() {
     this.changeGameState(STATE.LOST);
     this.looseSound.play();
+  
+    // Pass the current score to the LostMenu
+    this.lostMenu.setHighScore(this.scoreBoard.score);
+  
     this.scoreBoard.reset();
     this.nbEnemies = this.initialNbEnemies;
     this.reset();
@@ -533,8 +537,11 @@ export default class Game {
 
   win() {
     this.changeGameState(STATE.WON);
+    // Pass the current score to the LostMenu
+    this.lostMenu.setHighScore(this.scoreBoard.score);
+
     this.scoreBoard.levelup();
-    this.nbEnemies += 1;
+    
     this.reset();
   }
 }
