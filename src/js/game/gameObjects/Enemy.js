@@ -92,7 +92,7 @@ export default class Enemy extends GameObject {
       width: 10,
       height: 20,
       directionY: 1,      // Enemy missiles move downward
-      velocity: 10,
+      velocity: 8,
       assets: this.assets, // Pass assets if missile needs sounds or textures
     });
 

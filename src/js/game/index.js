@@ -96,46 +96,52 @@ export default class Game {
   initListeners() {
     // Initialize keysPressed object
     this.keysPressed = {};
-
+    this.lastFireTime = 0; // Timestamp for the last fire
+  
     window.addEventListener('keydown', (e) => {
       if (Object.values(KEYBOARD).includes(e.keyCode)) e.preventDefault();
-
+  
       // Update key state
       this.keysPressed[e.keyCode] = true;
-
+  
       if (this.gameState !== STATE.PLAYING) return;
-
+  
       // Handle pause key
       if (e.keyCode === KEYBOARD.PAUSE && this.gameState !== STATE.PAUSED) {
         this.pause();
       }
     });
-
+  
     window.addEventListener('keyup', (e) => {
       if (Object.values(KEYBOARD).includes(e.keyCode)) e.preventDefault();
-
+  
       // Update key state
       this.keysPressed[e.keyCode] = false;
-
+  
       if (this.gameState !== STATE.PLAYING) return;
-
+  
       // Handle pause key
       if (e.keyCode === KEYBOARD.PAUSE && this.gameState === STATE.PAUSED) {
         this.resume();
       }
-
-      // Handle fire key
+  
+      // Handle fire key with rate limiting
       if (e.keyCode === KEYBOARD.FIRE) {
-        this.player.fire();
+        const currentTime = Date.now(); // Get the current timestamp
+        if (currentTime - this.lastFireTime >= 400) { // Check if 500ms have passed
+          this.player.fire();
+          this.lastFireTime = currentTime; // Update the last fire time
+        }
       }
     });
-
+  
     // Menu event listeners
     this.welcomeMenu.events.on('start', this.onStart);
     this.lostMenu.events.on('start', this.onStart);
     this.wonMenu.events.on('start', this.onStart);
     this.pauseMenu.events.on('resume', this.onResume);
   }
+  
 
   onStart() {
     if (this.gameState === STATE.WELCOME || this.gameState === STATE.LOST || this.gameState === STATE.WON) {
