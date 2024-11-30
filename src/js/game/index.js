@@ -7,7 +7,6 @@ import PauseMenu from './hud/PauseMenu.js';
 import LoadingMenu from './hud/LoadingMenu.js';
 import WelcomeMenu from './hud/WelcomeMenu.js';
 import LostMenu from './hud/LostMenu.js';
-import WonMenu from './hud/WonMenu.js'; // Corrected import
 import ScoreBoard from './hud/ScoreBoard.js';
 
 const KEYBOARD = {
@@ -60,7 +59,6 @@ export default class Game {
     this.loadingMenu = new LoadingMenu();
     this.welcomeMenu = new WelcomeMenu();
     this.lostMenu = new LostMenu();
-    this.wonMenu = new LostMenu();
     this.pauseMenu = new PauseMenu();
 
     // scoreBoard
@@ -75,6 +73,9 @@ export default class Game {
     // Initialize event handlers
     this.onStart = this.onStart.bind(this);
     this.onResume = this.onResume.bind(this);
+
+    // Initialize last frame time for deltaTime calculation
+    this.lastFrameTime = performance.now();
 
     this.init();
   }
@@ -138,7 +139,6 @@ export default class Game {
     // Menu event listeners
     this.welcomeMenu.events.on('start', this.onStart);
     this.lostMenu.events.on('start', this.onStart);
-    this.wonMenu.events.on('start', this.onStart);
     this.pauseMenu.events.on('resume', this.onResume);
   }
   
@@ -165,7 +165,7 @@ export default class Game {
         this.lostMenu.unbind();
         break;
       case STATE.WON:
-        this.wonMenu.unbind();
+        
         break;
       case STATE.PAUSED:
         this.pauseMenu.unbind();
@@ -185,7 +185,7 @@ export default class Game {
         this.lostMenu.bind();
         break;
       case STATE.WON:
-        this.wonMenu.bind();
+        
         break;
       case STATE.PAUSED:
         this.pauseMenu.bind();
@@ -281,7 +281,7 @@ export default class Game {
         this.lostMenu.render();
         break;
       case STATE.WON:
-        this.wonMenu.render();
+        
         break;
       case STATE.PLAYING:
         this.scoreBoard.render();
@@ -518,7 +518,7 @@ export default class Game {
   reset() {
     this.player = this.generatePlayer();
     this.blocks = this.generateBlocks();
-    this.enemies = this.generateEnemies(this.nbEnemies);
+    this.enemies = this.generateEnemies();
     this.music.pause();
     this.music.currentTime = 0;
   }
@@ -526,22 +526,23 @@ export default class Game {
   loose() {
     this.changeGameState(STATE.LOST);
     this.looseSound.play();
-  
+
     // Pass the current score to the LostMenu
     this.lostMenu.setHighScore(this.scoreBoard.score);
-  
+
     this.scoreBoard.reset();
-    this.nbEnemies = this.initialNbEnemies;
+    this.nbEnemies = this.initialNbEnemies; // Reset the number of enemies to initial value
     this.reset();
   }
 
   win() {
-    this.changeGameState(STATE.WON);
-    // Pass the current score to the LostMenu
-    this.lostMenu.setHighScore(this.scoreBoard.score);
-
+    // Removed levelup and incrementing of enemies
     this.scoreBoard.levelup();
-    
+
+    // Reset the game state
     this.reset();
+
+    // Resume the game
+    this.resume();
   }
 }

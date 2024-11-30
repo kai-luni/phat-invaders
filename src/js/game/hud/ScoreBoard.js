@@ -14,7 +14,7 @@ export default class ScoreBoard {
   constructor() {
     this.fontSize = 16; // Font size for the text
     this.score = 0; // Initial score
-    this.level = 0; // Initial level
+    this.level = 1; // Initial level
 
     // Text objects for displaying score and level
     this.scoreText = new Text({
