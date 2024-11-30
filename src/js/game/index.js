@@ -77,6 +77,11 @@ export default class Game {
     // Initialize last frame time for deltaTime calculation
     this.lastFrameTime = performance.now();
 
+    // values that change with level up
+    this.enemyVelocity = 1.0;
+    this.enemyFireRate = 40; // the lower the value, the faster the shooting of enemies
+    this.msUntilEnemyGoDown = 8000;
+
     this.init();
   }
 
@@ -129,7 +134,7 @@ export default class Game {
       // Handle fire key with rate limiting
       if (e.keyCode === KEYBOARD.FIRE) {
         const currentTime = Date.now(); // Get the current timestamp
-        if (currentTime - this.lastFireTime >= 400) { // Check if 500ms have passed
+        if (currentTime - this.lastFireTime >= 4) { // Check if 500ms have passed
           this.player.fire();
           this.lastFireTime = currentTime; // Update the last fire time
         }
@@ -221,6 +226,7 @@ export default class Game {
             height: 40,
             texture: this.assets.enemyTexture,
             assets: this.assets,
+            velocity: this.enemyVelocity
           })
         );
       }
@@ -329,7 +335,7 @@ export default class Game {
     // Determine if 10 seconds have passed
     const currentTime = Date.now();
     const triggerSpecialAction = this.lastSpecialActionTime 
-      ? currentTime - this.lastSpecialActionTime >= 8000 
+      ? currentTime - this.lastSpecialActionTime >= this.msUntilEnemyGoDown 
       : true;
 
     if (triggerSpecialAction) {
@@ -343,8 +349,10 @@ export default class Game {
       // If any enemy reaches the edges of the game container, change direction
       if (enemy.x < 0 || enemy.x + enemy.width > this.canvas.width) changeDirection = true;
     });
+
+    let fireRate = this.enemies.length > 10 ? this.enemyFireRate : this.enemyFireRate*0.5;
     // A random enemy is shooting
-    if (Math.random() < 1 / 32 && this.enemies.length > 0) {
+    if (Math.random() < 1 / fireRate && this.enemies.length > 0) {
       // Choose a random enemy
       const randomEnemy = this.enemies[Math.floor(Math.random() * this.enemies.length)];
       randomEnemy.fire();
@@ -515,12 +523,14 @@ export default class Game {
     this.assets.playBackgroundMusic();
   }
 
-  reset() {
+  generateNextLevel() {
     this.player = this.generatePlayer();
     this.blocks = this.generateBlocks();
     this.enemies = this.generateEnemies();
     this.music.pause();
     this.music.currentTime = 0;
+
+    this.lastSpecialActionTime = Date.Now;
   }
 
   loose() {
@@ -532,15 +542,20 @@ export default class Game {
 
     this.scoreBoard.reset();
     this.nbEnemies = this.initialNbEnemies; // Reset the number of enemies to initial value
-    this.reset();
+    this.generateNextLevel();
   }
 
   win() {
     // Removed levelup and incrementing of enemies
     this.scoreBoard.levelup();
 
+    //increase difficulty
+    this.enemyVelocity += 0.2;
+    this.enemyFireRate -= (this.enemyFireRate / 12);
+    this.msUntilEnemyGoDown -= (this.msUntilEnemyGoDown / 16);
+
     // Reset the game state
-    this.reset();
+    this.generateNextLevel();
 
     // Resume the game
     this.resume();
