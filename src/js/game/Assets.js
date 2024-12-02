@@ -3,10 +3,12 @@ import gameMusic from '../../assets/audio/happy_christmas_background_music_small
 import looseSound from '../../assets/explosion.mp3';
 import enemyTexture from '../../assets/graphics/grinch_1.png';
 import enemyRocketTexture from '../../assets/graphics/schneeflocke.png';
-import blockTexture from '../../assets/graphics/kugel_rot.png';
-import killSound from '../../assets/invaderkilled.wav';
+import fireBoostTexture from '../../assets/graphics/zuckerstange.png';
+import santaRocketTexture from '../../assets/graphics/kugel_rot.png';
+import blockTexture from '../../assets/graphics/kugel_gruen.png';
+import killSound from '../../assets/audio/ding-80828.mp3';
 import playerTexture from '../../assets/graphics/santa.png';
-import fireSound from '../../assets/shoot.wav';
+import fireSound from '../../assets/audio/080245_sfx_magic_84935.mp3';
 
 export default class Assets {
   constructor() {
@@ -33,6 +35,8 @@ export default class Assets {
 
     this.playerTexture = new Image();
     this.playerTexture.src = playerTexture;  // Set the image source
+    this.santaRocketTexture = new Image();
+    this.santaRocketTexture.src = santaRocketTexture;
 
     // Paths for audio files
     this.audioFiles = {

@@ -73,14 +73,14 @@ export default class Player extends GameObject {
     const missile = new MissileSanta({
       x: this.x + this.width / 2 , // Center the missile horizontally
       y: this.y,
-      width: 10,
-      height: 10,
+      width: 16,
+      height: 16,
     });
 
     this.missiles.push(missile);
 
     // Play the firing sound without interrupting background music
-    // this.assets.playFireSound();
+    this.assets.playFireSound();
   }
 
   /**
