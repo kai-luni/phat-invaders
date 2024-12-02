@@ -72,9 +72,7 @@ export default class Player extends GameObject {
   fire() {
     const missile = new MissileSanta({
       x: this.x + this.width / 2 , // Center the missile horizontally
-      y: this.y,
-      width: 16,
-      height: 16,
+      y: this.y
     });
 
     this.missiles.push(missile);

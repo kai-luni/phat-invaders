@@ -6,14 +6,14 @@ export default class Block extends GameObject {
     super(...args)
 
     // block doesnt move
-    this.velocity = 0
+    this.velocity = 0;
 
-    this.texture = args[0].texture
-    this.assets = args[0].assets
+    this.texture = args[0].texture;
+    this.assets = args[0].assets;
   }
 
   die () {
-    this.assets.playKillSound();
+    //this.assets.playKillSound();
   }
 
   move () {
