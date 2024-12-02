@@ -9,18 +9,37 @@ export default class LostMenu {
   constructor() {
     this.title = new Title({ text: 'Game Over!', x: canvas.width / 2, y: canvas.height / 2 - 100 });
     this.text1 = new Text({ text: 'Enter your name to submit your high score!', x: canvas.width / 2, y: canvas.height / 2 - 50 });
-    this.input = { x: canvas.width / 2 - 100, y: canvas.height / 2 - 20, width: 200, height: 30, value: '' }; // Input box
+    this.input = { x: canvas.width / 2 - 100, y: canvas.height / 2 - 20, width: 200, height: 30 }; // Input box dimensions
     this.submitButton = new Button({ text: 'Submit High Score', x: canvas.width / 2, y: canvas.height / 2 + 50 });
     this.events = new Events();
     this.highScore = 0; // Initialize with 0 as default
 
+    // Create and style the input element
+    this.inputElement = document.createElement('input');
+    this.inputElement.type = 'text';
+    this.inputElement.placeholder = 'Enter your name';
+    this.inputElement.maxLength = 20;
+
+    this.inputElement.style.position = 'absolute';
+    this.inputElement.style.zIndex = 1000;
+    this.inputElement.style.background = '#ffffff';
+    this.inputElement.style.color = '#000000';
+    this.inputElement.style.fontSize = '16px';
+    this.inputElement.style.textAlign = 'center';
+    this.inputElement.style.border = '1px solid #000000';
+    this.inputElement.style.borderRadius = '5px';
+    this.inputElement.style.padding = '5px';
+    this.inputElement.style.display = 'none'; // Hide initially
+
+    document.body.appendChild(this.inputElement);
+
     this.onSubmitClick = this.onSubmitClick.bind(this);
-    this.onKeyDown = this.onKeyDown.bind(this);
+    this.positionInput = this.positionInput.bind(this);
   }
 
   // Event handler for the submit button click
   async onSubmitClick() {
-    const playerName = this.input.value || 'Anonymous'; // Use input value or default to 'Anonymous'
+    const playerName = this.inputElement.value || 'Anonymous'; // Get value from the input element
 
     try {
       // POST the high score to the API
@@ -32,7 +51,8 @@ export default class LostMenu {
 
       if (response.ok) {
         alert('High score submitted successfully!');
-        //this.events.emit('start'); // Emit an event to restart the game
+        // Optionally, emit an event to restart the game
+        // this.events.emit('start');
       } else {
         alert('Failed to submit high score. Try again!');
       }
@@ -42,13 +62,17 @@ export default class LostMenu {
     }
   }
 
-  // Event handler for keyboard input
-  onKeyDown(event) {
-    if (event.key.length === 1) {
-      this.input.value += event.key; // Append typed character
-    } else if (event.key === 'Backspace') {
-      this.input.value = this.input.value.slice(0, -1); // Remove last character
-    }
+  // Position the input element over the canvas
+  positionInput() {
+    const rect = canvas.el.getBoundingClientRect(); // Corrected line
+
+    const inputX = rect.left + this.input.x;
+    const inputY = rect.top + this.input.y;
+
+    this.inputElement.style.left = `${inputX}px`;
+    this.inputElement.style.top = `${inputY}px`;
+    this.inputElement.style.width = `${this.input.width}px`;
+    this.inputElement.style.height = `${this.input.height}px`;
   }
 
   // Bind event listeners when the menu is active
@@ -56,8 +80,15 @@ export default class LostMenu {
     // Bind submit button click
     this.submitButton.events.on('click', this.onSubmitClick);
 
-    // Bind keyboard input for name entry
-    window.addEventListener('keydown', this.onKeyDown);
+    // Show and focus the input element
+    this.inputElement.style.display = 'block';
+    this.inputElement.focus();
+
+    // Position the input element
+    this.positionInput();
+
+    // Handle window resize to reposition the input
+    window.addEventListener('resize', this.positionInput);
   }
 
   // Unbind event listeners when the menu is inactive
@@ -65,8 +96,11 @@ export default class LostMenu {
     // Unbind submit button click
     this.submitButton.events.off('click', this.onSubmitClick);
 
-    // Unbind keyboard input
-    window.removeEventListener('keydown', this.onKeyDown);
+    // Hide the input element
+    this.inputElement.style.display = 'none';
+
+    // Remove the resize event listener
+    window.removeEventListener('resize', this.positionInput);
   }
 
   setHighScore(score) {
@@ -92,14 +126,12 @@ export default class LostMenu {
     });
     highScoreText.render();
 
-    // Input field
-    canvas.ctx.fillStyle = '#ffffff';
-    canvas.ctx.fillRect(this.input.x, this.input.y, this.input.width, this.input.height);
-    canvas.ctx.fillStyle = '#000000';
-    canvas.ctx.font = '16px Arial';
-    canvas.ctx.fillText(this.input.value, this.input.x + 5, this.input.y + 20);
-
     // Submit button
     this.submitButton.render();
+  }
+
+  // Clean up the input element when no longer needed
+  destroy() {
+    this.inputElement.remove();
   }
 }

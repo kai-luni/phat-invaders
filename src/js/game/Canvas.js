@@ -1,19 +1,13 @@
 class Canvas {
-  constructor({ el }) {
+  constructor({ el, logicalWidth = 1000, logicalHeight = 1000 }) {
     this.el = el;
-    this.logicalWidth = 1000;
-    this.logicalHeight = 1000;
+    this.logicalWidth = logicalWidth;
+    this.logicalHeight = logicalHeight;
     this.ctx = this.el.getContext('2d');
     
     // Set the logical size
-    this.el.width = this.logicalWidth; // Use this.logicalWidth
-    this.el.height = this.logicalHeight; // Use this.logicalHeight
-
-    // Initialize resize logic
-    // this.resizeCanvas();
-
-    // Handle window resizing
-    // window.addEventListener('resize', () => this.resizeCanvas());
+    this.el.width = this.logicalWidth;
+    this.el.height = this.logicalHeight;
   }
 
   get width() {
@@ -60,7 +54,7 @@ export let canvas;
 export function initCanvas({ el }) {
   // Get the canvas element by selector
   const canvasElement = document.querySelector(el);
-  
+
   // Set up the canvas with a fixed logical size
   const logicalWidth = 1000;
   const logicalHeight = 1000;
@@ -74,4 +68,3 @@ export function initCanvas({ el }) {
   // Return the initialized canvas
   return canvas;
 }
-
