@@ -57,7 +57,7 @@ export default class Game {
 
     // menus
     this.loadingMenu = new LoadingMenu();
-    this.welcomeMenu = new WelcomeMenu();
+    this.welcomeMenu = new WelcomeMenu(this.canvas.width, this.canvas.height);
     this.lostMenu = new LostMenu();
     this.pauseMenu = new PauseMenu();
 
