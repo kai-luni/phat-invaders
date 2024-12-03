@@ -1,3 +1,5 @@
+// index.js
+
 import { initCanvas } from './Canvas.js';
 import Assets from './Assets.js';
 import Block from './gameObjects/Block.js';
@@ -28,9 +30,8 @@ const STATE = {
 
 export default class Game {
   /**
-   * Space invaders game constructor
-   * @param {Object} params - initialisation parameters
-   * @param {String} params.el - css selector for the canvas element
+   * Space Invaders game constructor
+   * @param {Object} params - initialization parameters
    * @param {Integer} params.nbEnemies - number of enemies to generate
    */
   constructor({ nbEnemies = 3 }) {
@@ -39,37 +40,11 @@ export default class Game {
     this.nbEnemies = nbEnemies;
     this.initialNbEnemies = nbEnemies;
 
-    // assets
+    // Assets
     this.assets = new Assets();
 
-    // game state
+    // Game state
     this.gameState = STATE.LOADING;
-
-    // blocks
-    this.blocks = this.generateBlocks();
-
-    // player
-    this.player = this.generatePlayer();
-
-    // enemies
-    this.enemies = this.generateEnemies();
-    this.enemiesChangeDirection = false;
-
-    // menus
-    this.loadingMenu = new LoadingMenu();
-    this.welcomeMenu = new WelcomeMenu(this.canvas.width, this.canvas.height);
-    this.lostMenu = new LostMenu();
-    this.pauseMenu = new PauseMenu();
-
-    // scoreBoard
-    this.scoreBoard = new ScoreBoard();
-
-    // game music
-    this.music = this.assets.music;
-    this.music.loop = true;
-
-    this.looseSound = this.assets.looseSound;
-
     // Initialize event handlers
     this.onStart = this.onStart.bind(this);
     this.onResume = this.onResume.bind(this);
@@ -77,12 +52,48 @@ export default class Game {
     // Initialize last frame time for deltaTime calculation
     this.lastFrameTime = performance.now();
 
-    // values that change with level up
+    // Values that change with level up
     this.enemyVelocity = 1.0;
-    this.enemyFireRate = 40; // the lower the value, the faster the shooting of enemies
+    this.enemyFireRate = 40; // The lower the value, the faster the shooting of enemies
     this.msUntilEnemyGoDown = 8000;
 
-    this.init();
+    // Show initial overlay
+    this.showInitialOverlay();
+  }
+
+  showInitialOverlay() {
+    // Create the overlay
+    this.initialOverlay = document.createElement('div');
+    this.initialOverlay.style.position = 'fixed';
+    this.initialOverlay.style.top = '0';
+    this.initialOverlay.style.left = '0';
+    this.initialOverlay.style.width = '100%';
+    this.initialOverlay.style.height = '100%';
+    this.initialOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'; // Black with opacity
+    this.initialOverlay.style.display = 'flex';
+    this.initialOverlay.style.justifyContent = 'center';
+    this.initialOverlay.style.alignItems = 'center';
+    this.initialOverlay.style.zIndex = '1000'; // Ensure it appears above other elements
+
+    // Create the text
+    this.overlayText = document.createElement('div');
+    this.overlayText.textContent = 'Click Me';
+    this.overlayText.style.fontSize = '24px';
+    this.overlayText.style.color = '#ffffff';
+    this.overlayText.style.cursor = 'pointer';
+
+    this.initialOverlay.appendChild(this.overlayText);
+
+    // Add click event listener
+    this.initialOverlay.addEventListener('click', () => {
+      // Change the text to 'Loading...'
+      this.overlayText.textContent = 'Loading...';
+      // Start initialization
+      this.init();
+    });
+
+    // Add the overlay to the body
+    document.body.appendChild(this.initialOverlay);
   }
 
   init() {
@@ -92,6 +103,11 @@ export default class Game {
         this.initListeners();
         this.changeGameState(STATE.WELCOME); // Use changeGameState to handle initial state
         this.update();
+        // Remove the overlay
+        if (this.initialOverlay) {
+          this.initialOverlay.remove();
+          this.initialOverlay = null;
+        }
       })
       .catch((err) => {
         this.gameState = STATE.LOADING;
@@ -103,55 +119,74 @@ export default class Game {
     // Initialize keysPressed object
     this.keysPressed = {};
     this.lastFireTime = 0; // Timestamp for the last fire
-  
+
     window.addEventListener('keydown', (e) => {
       if (Object.values(KEYBOARD).includes(e.keyCode)) e.preventDefault();
-  
+
       // Update key state
       this.keysPressed[e.keyCode] = true;
-  
+
       if (this.gameState !== STATE.PLAYING) return;
-  
+
       // Handle pause key
       if (e.keyCode === KEYBOARD.PAUSE && this.gameState !== STATE.PAUSED) {
         this.pause();
       }
     });
-  
+
     window.addEventListener('keyup', (e) => {
       if (Object.values(KEYBOARD).includes(e.keyCode)) e.preventDefault();
-  
+
       // Update key state
       this.keysPressed[e.keyCode] = false;
-  
+
       if (this.gameState !== STATE.PLAYING) return;
-  
+
       // Handle pause key
       if (e.keyCode === KEYBOARD.PAUSE && this.gameState === STATE.PAUSED) {
         this.resume();
       }
-  
+
       // Handle fire key with rate limiting
       if (e.keyCode === KEYBOARD.FIRE) {
         const currentTime = Date.now(); // Get the current timestamp
-        if (currentTime - this.lastFireTime >= 4) { // Check if 500ms have passed
+        if (currentTime - this.lastFireTime >= 4) {
           this.player.fire();
           this.lastFireTime = currentTime; // Update the last fire time
         }
       }
     });
-  
+
     // Menu event listeners
+    this.welcomeMenu = new WelcomeMenu(this.canvas.width, this.canvas.height);
     this.welcomeMenu.events.on('start', this.onStart);
+
+    this.lostMenu = new LostMenu();
     this.lostMenu.events.on('start', this.onStart);
+
+    this.pauseMenu = new PauseMenu();
     this.pauseMenu.events.on('resume', this.onResume);
   }
-  
 
   onStart() {
-    if (this.gameState === STATE.WELCOME || this.gameState === STATE.LOST || this.gameState === STATE.WON) {
-      this.resume();
+    if (
+      this.gameState === STATE.WELCOME ||
+      this.gameState === STATE.LOST ||
+      this.gameState === STATE.WON
+    ) {
+      this.startGame();
     }
+  }
+
+  startGame() {
+    // Initialize or reset game objects
+    this.blocks = this.generateBlocks();
+    this.player = this.generatePlayer();
+    this.enemies = this.generateEnemies();
+    this.scoreBoard = new ScoreBoard();
+
+    this.changeGameState(STATE.PLAYING);
+    this.assets.playBackgroundMusic();
   }
 
   onResume() {
@@ -169,9 +204,6 @@ export default class Game {
       case STATE.LOST:
         this.lostMenu.unbind();
         break;
-      case STATE.WON:
-        
-        break;
       case STATE.PAUSED:
         this.pauseMenu.unbind();
         break;
@@ -188,9 +220,6 @@ export default class Game {
         break;
       case STATE.LOST:
         this.lostMenu.bind();
-        break;
-      case STATE.WON:
-        
         break;
       case STATE.PAUSED:
         this.pauseMenu.bind();
@@ -212,7 +241,6 @@ export default class Game {
 
   /**
    * Generates a given number of enemies
-   * @param {Integer} nb - the number of enemies to be created
    */
   generateEnemies() {
     let enemies = [];
@@ -220,13 +248,13 @@ export default class Game {
       for (let j = 0; j < 6; j++) {
         enemies.push(
           new Enemy({
-            x: (this.canvas.width / 32) + (i * 44),
-            y: 64 + (j * 44),
+            x: this.canvas.width / 32 + i * 44,
+            y: 64 + j * 44,
             width: 40,
             height: 40,
             texture: this.assets.enemyTexture,
             assets: this.assets,
-            velocity: this.enemyVelocity
+            velocity: this.enemyVelocity,
           })
         );
       }
@@ -236,25 +264,25 @@ export default class Game {
 
   generateBlocks() {
     const layout = [
-      "0000011111001100110111110011111100000",
-      "0000011111101100110111111011111100000",
-      "0000011001101100110110011000110000000",
-      "0000011111101111110111111000110000000",
-      "0000011111001111110111111000110000000",
-      "0000011000001100110110011000110000000",
-      "0000011000001100110110011000110000000",
-      "0000011000001100110110011000110000000",
+      '0000011111001100110111110011111100000',
+      '0000011111101100110111111011111100000',
+      '0000011001101100110110011000110000000',
+      '0000011111101111110111111000110000000',
+      '0000011111001111110111111000110000000',
+      '0000011000001100110110011000110000000',
+      '0000011000001100110110011000110000000',
+      '0000011000001100110110011000110000000',
     ];
     let blocks = [];
     const blockSize = 20; // Width and height of each block
-  
+
     layout.forEach((row, rowIndex) => {
-      row.split("").forEach((cell, colIndex) => {
-        if (cell === "1") {
+      row.split('').forEach((cell, colIndex) => {
+        if (cell === '1') {
           blocks.push(
             new Block({
-              x: (this.canvas.width / 8) + (colIndex * (blockSize + 1)), // Add 1 for spacing
-              y: (this.canvas.width / 32) * 23 + (rowIndex * (blockSize + 1)),
+              x: this.canvas.width / 8 + colIndex * (blockSize + 1), // Add 1 for spacing
+              y: (this.canvas.width / 32) * 23 + rowIndex * (blockSize + 1),
               width: blockSize,
               height: blockSize,
               texture: this.assets.blockTexture,
@@ -264,9 +292,9 @@ export default class Game {
         }
       });
     });
-  
+
     return blocks;
-  }  
+  }
 
   renderGame() {
     // First clear the canvas
@@ -275,7 +303,7 @@ export default class Game {
     // Then render something based on the game state
     switch (this.gameState) {
       case STATE.LOADING:
-        this.loadingMenu.render();
+        // Optionally render a loading screen
         break;
       case STATE.WELCOME:
         this.welcomeMenu.render();
@@ -287,7 +315,7 @@ export default class Game {
         this.lostMenu.render();
         break;
       case STATE.WON:
-        
+        // Optionally render a won screen
         break;
       case STATE.PLAYING:
         this.scoreBoard.render();
@@ -326,16 +354,14 @@ export default class Game {
 
   /**
    * Updates the position and direction of enemies.
-   * - Moves each enemy and checks if they should change direction.
-   * - Triggers an additional behavior every 10 seconds.
    */
   updateEnemies() {
     let changeDirection = false;
 
     // Determine if 10 seconds have passed
     const currentTime = Date.now();
-    const triggerSpecialAction = this.lastSpecialActionTime 
-      ? currentTime - this.lastSpecialActionTime >= this.msUntilEnemyGoDown 
+    const triggerSpecialAction = this.lastSpecialActionTime
+      ? currentTime - this.lastSpecialActionTime >= this.msUntilEnemyGoDown
       : true;
 
     if (triggerSpecialAction) {
@@ -350,7 +376,7 @@ export default class Game {
       if (enemy.x < 0 || enemy.x + enemy.width > this.canvas.width) changeDirection = true;
     });
 
-    let fireRate = this.enemies.length > 10 ? this.enemyFireRate : this.enemyFireRate*0.5;
+    let fireRate = this.enemies.length > 10 ? this.enemyFireRate : this.enemyFireRate * 0.5;
     // A random enemy is shooting
     if (Math.random() < 1 / fireRate && this.enemies.length > 0) {
       // Choose a random enemy
@@ -367,13 +393,15 @@ export default class Game {
     const now = performance.now();
     const deltaTime = (now - this.lastFrameTime) / 1000; // Convert to seconds
     this.lastFrameTime = now;
-  
+
     this.updateGame(deltaTime);
     this.renderGame();
-  
+
     requestAnimationFrame(this.update.bind(this));
   }
 
+  /**
+   * Checks for collisions between game objects.
   /**
    * Checks for collisions between game objects.
    * 
@@ -515,7 +543,7 @@ export default class Game {
 
   pause() {
     this.changeGameState(STATE.PAUSED);
-    this.music.pause();
+    this.assets.music.pause();
   }
 
   resume() {
@@ -527,15 +555,15 @@ export default class Game {
     this.player = this.generatePlayer();
     this.blocks = this.generateBlocks();
     this.enemies = this.generateEnemies();
-    this.music.pause();
-    this.music.currentTime = 0;
+    this.assets.music.pause();
+    this.assets.music.currentTime = 0;
 
-    this.lastSpecialActionTime = Date.Now;
+    this.lastSpecialActionTime = Date.now();
   }
 
   loose() {
     this.changeGameState(STATE.LOST);
-    this.looseSound.play();
+    this.assets.looseSound.play();
 
     // Pass the current score to the LostMenu
     this.lostMenu.setHighScore(this.scoreBoard.score);
@@ -546,13 +574,13 @@ export default class Game {
   }
 
   win() {
-    // Removed levelup and incrementing of enemies
+    // Removed level-up and incrementing of enemies
     this.scoreBoard.levelup();
 
-    //increase difficulty
+    // Increase difficulty
     this.enemyVelocity += 0.2;
-    this.enemyFireRate -= (this.enemyFireRate / 12);
-    this.msUntilEnemyGoDown -= (this.msUntilEnemyGoDown / 16);
+    this.enemyFireRate -= this.enemyFireRate / 12;
+    this.msUntilEnemyGoDown -= this.msUntilEnemyGoDown / 16;
 
     // Reset the game state
     this.generateNextLevel();
