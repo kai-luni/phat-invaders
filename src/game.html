@@ -10,7 +10,11 @@
   <title>Space Invaders</title>
 </head>
 <body>
-  <canvas id="game">If you see this, your browser does not support this game. :(</canvas>
+  <div id="container">
+    <div class="background-block left"></div>
+    <canvas id="game">If you see this, your browser does not support this game. :(</canvas>
+    <div class="background-block right"></div>
+  </div>
 
   <!-- Make sure to use type="module" to allow import statements in JS file -->
   <script type="module" src="./js/spaceInvaders.js"></script>
