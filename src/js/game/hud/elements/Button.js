@@ -3,9 +3,9 @@ import Events from '../../Events.js';
 
 export default class Button {
   constructor({ text = 'Button', x = 50, y = 50, color = '#ba55ad', textColor = '#fff' }) {
-    this.fontSize = 16;
-    this.width = (text.length * this.fontSize) + (this.fontSize * 2);
-    this.height = this.fontSize * 3;
+    this.fontSize = 24;
+    this.width = (text.length * this.fontSize) * 0.6;
+    this.height = this.fontSize * 2;
 
     this.text = text;
     this.x = x - this.width / 2; // Center the button horizontally at the given x
@@ -57,6 +57,6 @@ export default class Button {
     canvas.ctx.font = `${this.fontSize}px VT323`;
     canvas.ctx.fillStyle = this.textColor;
     canvas.ctx.textAlign = 'center';
-    canvas.ctx.fillText(this.text, this.x + this.width / 2, this.y + this.fontSize * 1.9);
+    canvas.ctx.fillText(this.text, this.x + this.width / 2, this.y + this.fontSize * 1.3);
   }
 }

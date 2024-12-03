@@ -1,14 +1,19 @@
 // Assets.js
+
+//graphics
 import gameMusic from '../../assets/audio/happy_christmas_background_music_small.mp3';
-import looseSound from '../../assets/explosion.mp3';
 import enemyTexture from '../../assets/graphics/grinch_1.png';
 import enemyRocketTexture from '../../assets/graphics/schneeflocke.png';
 import fireBoostTexture from '../../assets/graphics/zuckerstange.png';
 import santaRocketTexture from '../../assets/graphics/kugel_rot.png';
 import blockTexture from '../../assets/graphics/kugel_gruen.png';
-import killSound from '../../assets/audio/ding-80828.mp3';
 import playerTexture from '../../assets/graphics/santa.png';
+import welcomeTexture from '../../assets/graphics/welcome.png';
+
+//sounds
 import fireSound from '../../assets/audio/080245_sfx_magic_84935.mp3';
+import killSound from '../../assets/audio/ding-80828.mp3';
+import looseSound from '../../assets/explosion.mp3';
 
 export default class Assets {
   constructor() {
@@ -29,18 +34,16 @@ export default class Assets {
     this.enemyTexture.src = enemyTexture;
     this.enemyRocketTexture = new Image();
     this.enemyRocketTexture.src = enemyRocketTexture;
-
-    //initialize items
     this.fireBoostTexture = new Image();
     this.fireBoostTexture.src = fireBoostTexture;
-
     this.blockTexture = new Image();
     this.blockTexture.src = blockTexture;  // Set the image source
-
     this.playerTexture = new Image();
     this.playerTexture.src = playerTexture;  // Set the image source
     this.santaRocketTexture = new Image();
     this.santaRocketTexture.src = santaRocketTexture;
+    this.welcomeTexture = new Image();
+    this.welcomeTexture.src = welcomeTexture;
 
     // Paths for audio files
     this.audioFiles = {
