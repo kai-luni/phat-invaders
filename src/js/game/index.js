@@ -10,6 +10,7 @@ import LoadingMenu from './hud/LoadingMenu.js';
 import WelcomeMenu from './hud/WelcomeMenu.js';
 import LostMenu from './hud/LostMenu.js';
 import ScoreBoard from './hud/ScoreBoard.js';
+import BossEnemy from './gameObjects/BossEnemy.js';
 
 const KEYBOARD = {
   LEFT: 37,
@@ -26,6 +27,7 @@ const STATE = {
   WON: 3,
   PAUSED: 4,
   PLAYING: 5,
+  BOSS: 6,
 };
 
 export default class Game {
@@ -124,7 +126,7 @@ export default class Game {
       // Update key state
       this.keysPressed[e.keyCode] = true;
 
-      if (this.gameState !== STATE.PLAYING) return;
+      if (this.gameState !== STATE.PLAYING && this.gameState !== STATE.BOSS) return;
 
       // Handle pause key
       if (e.keyCode === KEYBOARD.PAUSE && this.gameState !== STATE.PAUSED) {
@@ -138,7 +140,7 @@ export default class Game {
       // Update key state
       this.keysPressed[e.keyCode] = false;
 
-      if (this.gameState !== STATE.PLAYING) return;
+      if (this.gameState !== STATE.PLAYING && this.gameState !== STATE.BOSS) return;
 
       // Handle pause key
       if (e.keyCode === KEYBOARD.PAUSE && this.gameState === STATE.PAUSED) {
@@ -176,10 +178,16 @@ export default class Game {
     // Initialize or reset game objects
     this.blocks = this.generateBlocks();
     this.player = this.generatePlayer();
-    this.enemies = this.generateEnemiesAndItems();
+    
+    
     this.scoreBoard = new ScoreBoard();
-
-    this.changeGameState(STATE.PLAYING);
+    console.log("level:::::::::::: " + this.scoreBoard.level);
+    this.enemies = (this.scoreBoard.level == 1) ? this.generateBoss() : this.generateEnemiesAndItems();
+    if (this.scoreBoard.level != 1){
+      this.changeGameState(STATE.BOSS)
+    } else {
+      this.changeGameState(STATE.PLAYING);
+    }  
     this.assets.playBackgroundMusic();
   }
 
@@ -231,6 +239,19 @@ export default class Game {
       texture: this.assets.playerTexture,
       assets: this.assets,
     });
+  }
+
+  generateBoss() {
+    let enemies = [];
+    enemies.push(
+      new BossEnemy({
+        x: 100,
+        y: 100,
+        texture: this.assets.enemyTexture,
+        assets: this.assets,
+      })
+    );
+    return enemies;
   }
 
   /**
@@ -336,11 +357,21 @@ export default class Game {
           block.render();
         });
         break;
+      case STATE.BOSS:
+        this.scoreBoard.render();
+        this.player.render();
+        this.enemies.forEach((enemy) => {
+          enemy.render();
+        });
+        this.blocks.forEach((block) => {
+          block.render();
+        });
+        break;
     }
   }
 
   updateGame(deltaTime) {
-    if (this.gameState === STATE.PLAYING) {
+    if (this.gameState === STATE.PLAYING || this.gameState === STATE.BOSS) {
       // Update player direction based on keys pressed
       this.updatePlayerDirection();
 
@@ -558,7 +589,7 @@ export default class Game {
   generateNextLevel() {
     this.player = this.generatePlayer();
     this.blocks = this.generateBlocks();
-    this.enemies = this.generateEnemiesAndItems();
+    this.enemies = (this.level != 1) ? this.generateEnemiesAndItems() : this.generateBlocks();
     this.assets.music.pause();
     this.assets.music.currentTime = 0;
 
