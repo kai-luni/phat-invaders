@@ -179,11 +179,10 @@ export default class Game {
     this.blocks = this.generateBlocks();
     this.player = this.generatePlayer();
     
-    
     this.scoreBoard = new ScoreBoard();
     console.log("level:::::::::::: " + this.scoreBoard.level);
-    this.enemies = (this.scoreBoard.level == 1) ? this.generateBoss() : this.generateEnemiesAndItems();
-    if (this.scoreBoard.level != 1){
+    this.enemies = (this.scoreBoard.level % 3 == 0) ? this.generateBoss() : this.generateEnemiesAndItems();
+    if (this.scoreBoard.level % 3 == 0){
       this.changeGameState(STATE.BOSS)
     } else {
       this.changeGameState(STATE.PLAYING);
@@ -304,7 +303,7 @@ export default class Game {
       '0000011000001100110110011000110000000',
     ];
     let blocks = [];
-    const blockSize = 20; // Width and height of each block
+    const blockSize = 22; // Width and height of each block
 
     layout.forEach((row, rowIndex) => {
       row.split('').forEach((cell, colIndex) => {
@@ -589,7 +588,7 @@ export default class Game {
   generateNextLevel() {
     this.player = this.generatePlayer();
     this.blocks = this.generateBlocks();
-    this.enemies = (this.level != 1) ? this.generateEnemiesAndItems() : this.generateBlocks();
+    this.enemies = (this.scoreBoard.level % 3 == 0) ? this.generateBoss() : this.generateEnemiesAndItems(); 
     this.assets.music.pause();
     this.assets.music.currentTime = 0;
 

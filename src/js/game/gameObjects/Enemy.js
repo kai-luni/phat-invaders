@@ -74,8 +74,8 @@ export default class Enemy extends GameObject {
       const missile = new MissileGrinch({
         x: this.x + this.width / 2,
         y: this.y + this.height,
-        width: 20,
-        height: 20,
+        width: 18,
+        height: 18,
         directionY: 1,      // Enemy missiles move downward
         velocity: 8,
         assets: this.assets, // Pass assets if missile needs sounds or textures
