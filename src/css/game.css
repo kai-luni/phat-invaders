@@ -31,8 +31,6 @@ canvas#game {
   /* Fixed square size for canvas */
   width: 100vw; /* Full viewport width */
   height: 100vw; /* Match width initially */
-  max-width: 1000px; /* Limit maximum width */
-  max-height: 1000px; /* Limit maximum height */
 
   /* Prevent overflow and ensure square shape */
   width: min(100vw, 100vh);  /* Use the smaller of the two (width or height) */

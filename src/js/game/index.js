@@ -593,6 +593,10 @@ export default class Game {
     this.enemyVelocity += 0.2;
     this.enemyFireRate -= this.enemyFireRate / 12;
     this.msUntilEnemyGoDown -= this.msUntilEnemyGoDown / 16;
+    console.log("Upgrade");
+    console.log("Speed " + this.enemyVelocity);
+    console.log("Firerate " + this.enemyFireRate);
+    console.log("Go Down Speed" + this.msUntilEnemyGoDown);
 
     // Reset the game state
     this.generateNextLevel();
