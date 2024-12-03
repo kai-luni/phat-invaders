@@ -30,6 +30,10 @@ export default class Assets {
     this.enemyRocketTexture = new Image();
     this.enemyRocketTexture.src = enemyRocketTexture;
 
+    //initialize items
+    this.fireBoostTexture = new Image();
+    this.fireBoostTexture.src = fireBoostTexture;
+
     this.blockTexture = new Image();
     this.blockTexture.src = blockTexture;  // Set the image source
 

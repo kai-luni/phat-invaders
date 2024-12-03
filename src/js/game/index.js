@@ -149,11 +149,7 @@ export default class Game {
 
       // Handle fire key with rate limiting
       if (e.keyCode === KEYBOARD.FIRE) {
-        const currentTime = Date.now(); // Get the current timestamp
-        if (currentTime - this.lastFireTime >= 4) {
-          this.player.fire();
-          this.lastFireTime = currentTime; // Update the last fire time
-        }
+        this.player.fire();
       }
     });
 
@@ -182,7 +178,7 @@ export default class Game {
     // Initialize or reset game objects
     this.blocks = this.generateBlocks();
     this.player = this.generatePlayer();
-    this.enemies = this.generateEnemies();
+    this.enemies = this.generateEnemiesAndItems();
     this.scoreBoard = new ScoreBoard();
 
     this.changeGameState(STATE.PLAYING);
@@ -242,25 +238,38 @@ export default class Game {
   /**
    * Generates a given number of enemies
    */
-  generateEnemies() {
+  generateEnemiesAndItems() {
     let enemies = [];
+    const totalEnemies = 12 * 6; // Total number of enemies
+    const specialEnemyIndex = Math.floor(Math.random() * totalEnemies); // Pick a random index
+  
+    let currentIndex = 0; // Track the index of the current enemy being created
+  
     for (let i = 0; i < 12; i++) {
       for (let j = 0; j < 6; j++) {
+        // Determine if this enemy is the special one
+        const isFireBoostItem = currentIndex === specialEnemyIndex;
+  
         enemies.push(
           new Enemy({
             x: this.canvas.width / 32 + i * 44,
             y: 64 + j * 44,
             width: 40,
             height: 40,
-            texture: this.assets.enemyTexture,
+            texture: isFireBoostItem ? this.assets.fireBoostTexture : this.assets.enemyTexture,
             assets: this.assets,
             velocity: this.enemyVelocity,
+            type: isFireBoostItem ? 1 : 0, // Assign type 1 if special
           })
         );
+  
+        currentIndex++; // Increment the current index
       }
     }
+  
     return enemies;
   }
+  
 
   generateBlocks() {
     const layout = [
@@ -433,6 +442,9 @@ export default class Game {
           missile.y < enemy.y + enemy.height &&
           missile.y + missile.height > enemy.y
         ) {
+          if (enemy.type == 1) {
+            this.player.shootFast();
+          }
           enemy.die();
           this.scoreBoard.incrementScore();
           enemiesHit.push(enemy);
@@ -554,7 +566,7 @@ export default class Game {
   generateNextLevel() {
     this.player = this.generatePlayer();
     this.blocks = this.generateBlocks();
-    this.enemies = this.generateEnemies();
+    this.enemies = this.generateEnemiesAndItems();
     this.assets.music.pause();
     this.assets.music.currentTime = 0;
 

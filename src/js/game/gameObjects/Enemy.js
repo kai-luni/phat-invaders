@@ -16,8 +16,9 @@ export default class Enemy extends GameObject {
    * @param {HTMLImageElement} params.texture - Image texture for the enemy.
    * @param {Assets} params.assets - Assets containing game resources.
    * @param {number} [params.velocity=1] - Movement speed of the enemy.
+   * @param {number} [params.type=0] - There are enemies and items and each has a certain id
    */
-  constructor({ x, y, width, height, texture, assets, velocity = 1 }) {
+  constructor({ x, y, width, height, texture, assets, velocity = 1, type = 0 }) {
     super({ x, y, width, height });
 
     /**
@@ -33,6 +34,8 @@ export default class Enemy extends GameObject {
      * @type {HTMLImageElement}
      */
     this.texture = texture;
+
+    this.type = type
 
     /**
      * Game assets for sounds and other resources.
@@ -86,6 +89,11 @@ export default class Enemy extends GameObject {
    * The missile moves downward towards the player.
    */
   fire() {
+    // type larger 0 is not shooting (item)
+    if (this.type > 0) {
+      return;
+    }
+
     const missile = new MissileGrinch({
       x: this.x + this.width / 2,
       y: this.y + this.height,
