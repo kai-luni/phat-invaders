@@ -52,7 +52,7 @@ export default class Game {
 
     // Values that change with level up
     this.enemyVelocity = 1.0;
-    this.enemyFireRate = 40; // The lower the value, the faster the shooting of enemies
+    this.enemyFireRate = 460; // The lower the value, the faster the shooting of enemies
     this.msUntilEnemyGoDown = 8000;
 
     // Show initial overlay
@@ -256,6 +256,8 @@ export default class Game {
             height: 40,
             texture: isFireBoostItem ? this.assets.fireBoostTexture : this.assets.enemyTexture,
             assets: this.assets,
+            column: i,
+            row: j,
             velocity: this.enemyVelocity,
             type: isFireBoostItem ? 1 : 0, // Assign type 1 if special
           })
@@ -383,16 +385,36 @@ export default class Game {
       if (enemy.x < 0 || enemy.x + enemy.width > this.canvas.width) changeDirection = true;
     });
 
-    let fireRate = this.enemies.length > 10 ? this.enemyFireRate : this.enemyFireRate * 0.5;
-    // A random enemy is shooting
-    if (Math.random() < 1 / fireRate && this.enemies.length > 0) {
-      // Choose a random enemy
-      const randomEnemy = this.enemies[Math.floor(Math.random() * this.enemies.length)];
-      randomEnemy.fire();
-    }
+    let frontEnemies = this.getLowestEnemiesByColumn(this.enemies);
+    frontEnemies.forEach((frontEnemy) => {
+      frontEnemy.fire(this.enemyFireRate);
+    });
 
     // Next update loop, are they going to change direction?
     this.enemiesChangeDirection = changeDirection;
+  }
+
+  getLowestEnemiesByColumn(enemies) {
+    // Create a map to store the lowest enemy for each column
+    const columnMap = new Map();
+  
+    // Iterate through all enemies
+    enemies.forEach((enemy) => {
+      const { column, row } = enemy;
+  
+      // If the column doesn't exist in the map, add it
+      if (!columnMap.has(column)) {
+        columnMap.set(column, enemy);
+      } else {
+        // Compare and update if the current enemy is lower (higher row value)
+        if (row > columnMap.get(column).row) {
+          columnMap.set(column, enemy);
+        }
+      }
+    });
+  
+    // Return the front enemies as a list (values of the map)
+    return Array.from(columnMap.values());
   }
 
   update() {

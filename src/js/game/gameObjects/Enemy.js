@@ -15,10 +15,12 @@ export default class Enemy extends GameObject {
    * @param {number} params.height - Height of the enemy.
    * @param {HTMLImageElement} params.texture - Image texture for the enemy.
    * @param {Assets} params.assets - Assets containing game resources.
+   * @param {number} params.column - Column of monster
+   * @param {number} params.row - Row of monster
    * @param {number} [params.velocity=1] - Movement speed of the enemy.
    * @param {number} [params.type=0] - There are enemies and items and each has a certain id
    */
-  constructor({ x, y, width, height, texture, assets, velocity = 1, type = 0 }) {
+  constructor({ x, y, width, height, texture, assets, column, row, velocity = 1, type = 0 }) {
     super({ x, y, width, height });
 
     this.direction = { x: 1, y: 0 }; // Enemies move horizontally by default
@@ -27,6 +29,8 @@ export default class Enemy extends GameObject {
     this.assets = assets;
     this.velocity = velocity;
     this.missiles = [];
+    this.column = column;
+    this.row = row;
   }
 
   /**
@@ -61,23 +65,24 @@ export default class Enemy extends GameObject {
    * Fires a missile from the enemy's current position.
    * The missile moves downward towards the player.
    */
-  fire() {
+  fire(fireRate) {
     // type larger than 0 is not shooting (item)
     if (this.type > 0) {
       return;
     }
-
-    const missile = new MissileGrinch({
-      x: this.x + this.width / 2,
-      y: this.y + this.height,
-      width: 10,
-      height: 20,
-      directionY: 1,      // Enemy missiles move downward
-      velocity: 8,
-      assets: this.assets, // Pass assets if missile needs sounds or textures
-    });
-
-    this.missiles.push(missile);
+    if (Math.random() < 1 / fireRate) {
+      const missile = new MissileGrinch({
+        x: this.x + this.width / 2,
+        y: this.y + this.height,
+        width: 10,
+        height: 20,
+        directionY: 1,      // Enemy missiles move downward
+        velocity: 8,
+        assets: this.assets, // Pass assets if missile needs sounds or textures
+      });
+  
+      this.missiles.push(missile);
+    }
   }
 
   /**
