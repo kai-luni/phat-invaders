@@ -34,11 +34,9 @@ export default class Game {
    * @param {Object} params - initialization parameters
    * @param {Integer} params.nbEnemies - number of enemies to generate
    */
-  constructor({ nbEnemies = 3 }) {
+  constructor() {
     const el = '#game';
     this.canvas = initCanvas({ el });
-    this.nbEnemies = nbEnemies;
-    this.initialNbEnemies = nbEnemies;
 
     // Assets
     this.assets = new Assets();
@@ -436,18 +434,15 @@ export default class Game {
     // Check collisions between player missiles and enemies
     this.enemies.forEach((enemy) => {
       this.player.missiles.forEach((missile) => {
-        if (
-          missile.x < enemy.x + enemy.width &&
-          missile.x + missile.width > enemy.x &&
-          missile.y < enemy.y + enemy.height &&
-          missile.y + missile.height > enemy.y
-        ) {
+        if (enemy.hit(missile)) {
           if (enemy.type == 1) {
             this.player.shootFast();
           }
-          enemy.die();
-          this.scoreBoard.incrementScore();
-          enemiesHit.push(enemy);
+          if (enemy.dead){
+            enemy.die();
+            this.scoreBoard.incrementScore();
+            enemiesHit.push(enemy);
+          }
           playerMissilesHit.push(missile);
         }
       });
@@ -456,12 +451,7 @@ export default class Game {
     // Check collisions between enemy missiles and player
     this.enemies.forEach((enemy) => {
       enemy.missiles.forEach((missile) => {
-        if (
-          missile.x < this.player.x + this.player.width &&
-          missile.x + missile.width > this.player.x &&
-          missile.y < this.player.y + this.player.height &&
-          missile.y + missile.height > this.player.y
-        ) {
+        if (this.player.hit(missile)){
           this.loose();
           enemyMissilesHit.push(missile);
         }
@@ -471,12 +461,7 @@ export default class Game {
     // Check collisions between player's missiles and blocks
     this.blocks.forEach((block) => {
       this.player.missiles.forEach((missile) => {
-        if (
-          missile.x < block.x + block.width &&
-          missile.x + missile.width > block.x &&
-          missile.y < block.y + block.height &&
-          missile.y + missile.height > block.y
-        ) {
+        if (block.hit(missile)) {
           block.die();
           blocksHit.push(block);
           playerMissilesHit.push(missile);
@@ -488,12 +473,7 @@ export default class Game {
     this.blocks.forEach((block) => {
       this.enemies.forEach((enemy) => {
         enemy.missiles.forEach((missile) => {
-          if (
-            missile.x < block.x + block.width &&
-            missile.x + missile.width > block.x &&
-            missile.y < block.y + block.height &&
-            missile.y + missile.height > block.y
-          ) {
+          if (block.hit(missile)) {
             enemyMissilesHit.push(missile);
             blocksHit.push(block);
           }
@@ -504,12 +484,7 @@ export default class Game {
     // Check collisions between enemies and blocks
     this.blocks.forEach((block) => {
       this.enemies.forEach((enemy) => {
-        if (
-          enemy.x < block.x + block.width &&
-          enemy.x + enemy.width > block.x &&
-          enemy.y < block.y + block.height &&
-          enemy.y + enemy.height > block.y
-        ) {
+        if (block.hit(enemy)) {
           this.loose();
         }
       });
@@ -519,12 +494,7 @@ export default class Game {
     this.player.missiles.forEach((playerMissile) => {
       this.enemies.forEach((enemy) => {
         enemy.missiles.forEach((enemyMissile) => {
-          if (
-            playerMissile.x < enemyMissile.x + enemyMissile.width &&
-            playerMissile.x + playerMissile.width > enemyMissile.x &&
-            playerMissile.y < enemyMissile.y + enemyMissile.height &&
-            playerMissile.y + playerMissile.height > enemyMissile.y
-          ) {
+          if (enemyMissile.hit(playerMissile)) {
             playerMissilesHit.push(playerMissile);
             enemyMissilesHit.push(enemyMissile);
           }
@@ -581,7 +551,6 @@ export default class Game {
     this.lostMenu.setHighScore(this.scoreBoard.score);
 
     this.scoreBoard.reset();
-    this.nbEnemies = this.initialNbEnemies; // Reset the number of enemies to initial value
     this.generateNextLevel();
   }
 

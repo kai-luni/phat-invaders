@@ -21,6 +21,23 @@ export default class GameObject {
 
     this.direction = {x: 0, y: 0}
     this.velocity = 1
+
+    this.dead = false;
+  }
+
+  /**
+   * Checks if the object is hit by a given missile (rocket).
+   * @param {GameObject} rocket - The missile to check collision with.
+   * @returns {boolean} - Returns true if the missile hits the enemy.
+   */
+  hit(rocket) {
+    this.dead = (
+      rocket.x < this.x + this.width &&
+      rocket.x + rocket.width > this.x &&
+      rocket.y < this.y + this.height &&
+      rocket.y + rocket.height > this.y
+    );
+    return this.dead;
   }
 
   /**

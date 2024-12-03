@@ -1,5 +1,5 @@
-import GameObject from './GameObject.js'
-import MissileGrinch from './MissileGrinch.js'
+import GameObject from './GameObject.js';
+import MissileGrinch from './MissileGrinch.js';
 
 /**
  * Class representing an enemy in the game.
@@ -21,38 +21,11 @@ export default class Enemy extends GameObject {
   constructor({ x, y, width, height, texture, assets, velocity = 1, type = 0 }) {
     super({ x, y, width, height });
 
-    /**
-     * Direction of movement.
-     * @type {Object}
-     * @property {number} x - Horizontal direction (-1 for left, 1 for right).
-     * @property {number} y - Vertical direction (unused, default 0).
-     */
     this.direction = { x: 1, y: 0 }; // Enemies move horizontally by default
-
-    /**
-     * Image texture of the enemy.
-     * @type {HTMLImageElement}
-     */
     this.texture = texture;
-
-    this.type = type
-
-    /**
-     * Game assets for sounds and other resources.
-     * @type {Assets}
-     */
+    this.type = type;
     this.assets = assets;
-
-    /**
-     * Movement speed of the enemy.
-     * @type {number}
-     */
     this.velocity = velocity;
-
-    /**
-     * Array of missiles fired by the enemy.
-     * @type {MissileGrinch[]}
-     */
     this.missiles = [];
   }
 
@@ -66,17 +39,17 @@ export default class Enemy extends GameObject {
   }
 
   /**
-   * Updates the enemy's position
+   * Updates the enemy's position.
    * @param {boolean} changeDirection - Indicates whether the enemy should change direction.
-   * @param {boolean} goDown - Go down in the direction of Santa
+   * @param {boolean} goDown - Go down in the direction of Santa.
    */
   move(changeDirection, goDown) {
     // Change direction if required
     if (changeDirection) {
-      this.direction.x *= -1; // Reverse horizontal direction      
+      this.direction.x *= -1; // Reverse horizontal direction
     }
 
-    if(goDown) {
+    if (goDown) {
       this.y += this.height;
     }
 
@@ -89,7 +62,7 @@ export default class Enemy extends GameObject {
    * The missile moves downward towards the player.
    */
   fire() {
-    // type larger 0 is not shooting (item)
+    // type larger than 0 is not shooting (item)
     if (this.type > 0) {
       return;
     }
@@ -125,4 +98,3 @@ export default class Enemy extends GameObject {
     });
   }
 }
-
