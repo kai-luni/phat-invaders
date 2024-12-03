@@ -31,6 +31,8 @@ export default class Enemy extends GameObject {
     this.missiles = [];
     this.column = column;
     this.row = row;
+
+    this.lastDirectionChange = Date.now();
   }
 
   /**
@@ -47,10 +49,19 @@ export default class Enemy extends GameObject {
    * @param {boolean} changeDirection - Indicates whether the enemy should change direction.
    * @param {boolean} goDown - Go down in the direction of Santa.
    */
-  move(changeDirection, goDown) {
-    // Change direction if required
-    if (changeDirection) {
+  move(goDown) {
+    // Track time since the last direction change
+    if (!this.lastDirectionChange) {
+      this.lastDirectionChange = Date.now();
+    }
+
+    const currentTime = Date.now();
+    const timeElapsed = currentTime - this.lastDirectionChange;
+
+    // Change direction if more than 2 seconds have passed
+    if (timeElapsed >= 4000) {
       this.direction.x *= -1; // Reverse horizontal direction
+      this.lastDirectionChange = currentTime; // Reset the timer
     }
 
     if (goDown) {
@@ -60,6 +71,7 @@ export default class Enemy extends GameObject {
     // Update position based on direction and velocity
     this.x += this.direction.x * this.velocity;
   }
+
 
   /**
    * Fires a missile from the enemy's current position.

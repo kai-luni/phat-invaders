@@ -53,9 +53,9 @@ export default class Game {
     this.lastFrameTime = performance.now();
 
     // Values that change with level up
-    this.enemyVelocity = 1.0;
+    this.enemyVelocity = 1.2;
     this.enemyFireRate = 460; // The lower the value, the faster the shooting of enemies
-    this.msUntilEnemyGoDown = 8000;
+    this.msUntilEnemyGoDown = 7000;
 
     // Show initial overlay
     this.showInitialOverlay();
@@ -128,9 +128,9 @@ export default class Game {
 
       if (this.gameState !== STATE.PLAYING && this.gameState !== STATE.BOSS) return;
 
-      // Handle pause key
-      if (e.keyCode === KEYBOARD.PAUSE && this.gameState !== STATE.PAUSED) {
-        this.pause();
+      // Debug key to win the level
+      if (e.key === 'd' || e.key === 'D') {
+        this.win(); // Call the win method
       }
     });
 
@@ -248,6 +248,7 @@ export default class Game {
         y: 100,
         texture: this.assets.enemyTexture,
         assets: this.assets,
+        canvas: this.canvas
       })
     );
     return enemies;
@@ -270,7 +271,7 @@ export default class Game {
   
         enemies.push(
           new Enemy({
-            x: this.canvas.width / 32 + i * 44,
+            x: 180 + i * 44,
             y: 64 + j * 44,
             width: 40,
             height: 40,
@@ -395,7 +396,6 @@ export default class Game {
    * Updates the position and direction of enemies.
    */
   updateEnemies() {
-    let changeDirection = false;
 
     // Determine if 10 seconds have passed
     const currentTime = Date.now();
@@ -409,19 +409,13 @@ export default class Game {
 
     this.enemies.forEach((enemy) => {
       // Pass the condition for every 10 seconds to the move method
-      enemy.move(this.enemiesChangeDirection, triggerSpecialAction);
-
-      // If any enemy reaches the edges of the game container, change direction
-      if (enemy.x < 0 || enemy.x + enemy.width > this.canvas.width) changeDirection = true;
+      enemy.move(triggerSpecialAction);
     });
 
     let frontEnemies = this.getLowestEnemiesByColumn(this.enemies);
     frontEnemies.forEach((frontEnemy) => {
       frontEnemy.fire(this.enemyFireRate);
     });
-
-    // Next update loop, are they going to change direction?
-    this.enemiesChangeDirection = changeDirection;
   }
 
   getLowestEnemiesByColumn(enemies) {

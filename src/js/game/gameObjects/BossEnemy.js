@@ -19,12 +19,13 @@ export default class BossEnemy extends GameObject {
    * @param {number} [params.velocity=1] - Movement speed of the boss enemy.
    * @param {number} [params.health=20] - Health points of the boss enemy.
    */
-  constructor({ x, y, texture, assets, width = 200, height = 200, velocity = 2, health = 20 }) {
+  constructor({ x, y, texture, assets, canvas, width = 200, height = 200, velocity = 2, health = 20 }) {
     super({ x, y, width, height });
 
     this.assets = assets;
     this.texture = texture;
     this.velocity = velocity;
+    this.canvas = canvas;
 
     this.direction = { x: 1, y: 0 }; // Enemies move horizontally by default
     this.missiles = [];
@@ -107,19 +108,24 @@ export default class BossEnemy extends GameObject {
    * @param {boolean} changeDirection - Indicates whether the enemy should change direction.
    * @param {boolean} goDown - Go down in the direction of Santa.
    */
-  move(changeDirection, goDown) {
-    // Change direction if required
-    if (changeDirection) {
-      this.direction.x *= -1; // Reverse horizontal direction
+  move(goDown) {
+    // Change direction if boss reaches the left or right edge of the canvas
+    if (this.x <= 0) {
+        this.direction.x = 1;
     }
-
+    if (this.x + this.width >= this.canvas.width) {
+        this.direction.x = -1;
+    }
+  
+    // Move down if required
     if (goDown) {
-      this.y += this.height/5;
+      this.y += this.height / 5; // Adjust downward movement
     }
-
+  
     // Update position based on direction and velocity
     this.x += this.direction.x * this.velocity;
   }
+  
 
   /**
    * Renders the boss enemy and its missiles on the canvas.
