@@ -15,10 +15,10 @@ export default class Enemy extends GameObject {
    * @param {number} params.height - Height of the enemy.
    * @param {HTMLImageElement} params.texture - Image texture for the enemy.
    * @param {Assets} params.assets - Assets containing game resources.
-   * @param {number} params.column - Column of monster
-   * @param {number} params.row - Row of monster
+   * @param {number} params.column - Column of monster.
+   * @param {number} params.row - Row of monster.
    * @param {number} [params.velocity=1] - Movement speed of the enemy.
-   * @param {number} [params.type=0] - There are enemies and items and each has a certain id
+   * @param {number} [params.type=0] - There are enemies and items, each with a certain ID.
    */
   constructor({ x, y, width, height, texture, assets, column, row, velocity = 1, type = 0 }) {
     super({ x, y, width, height });
@@ -32,7 +32,7 @@ export default class Enemy extends GameObject {
     this.column = column;
     this.row = row;
 
-    this.lastDirectionChange = Date.now();
+    this.anchorX = x; // Store the original x coordinate as the anchor
   }
 
   /**
@@ -45,40 +45,59 @@ export default class Enemy extends GameObject {
   }
 
   /**
-   * Updates the enemy's position.
-   * @param {boolean} changeDirection - Indicates whether the enemy should change direction.
-   * @param {boolean} goDown - Go down in the direction of Santa.
+   * Checks if the object is hit by a given missile (rocket).
+   * @param {GameObject} rocket - The missile to check collision with.
+   * @returns {boolean} - Returns true if the missile hits the enemy.
    */
-  move(goDown) {
-    // Track time since the last direction change
-    if (!this.lastDirectionChange) {
-      this.lastDirectionChange = Date.now();
+  hit(rocket) {
+    this.dead = (
+      rocket.x < this.x + this.width &&
+      rocket.x + rocket.width > this.x &&
+      rocket.y < this.y + this.height &&
+      rocket.y + rocket.height > this.y
+    );
+
+    if (this.type > 0 && this.dead) {
+      this.assets.playBoostSound();
     }
 
-    const currentTime = Date.now();
-    const timeElapsed = currentTime - this.lastDirectionChange;
-
-    // Change direction if more than 2 seconds have passed
-    if (timeElapsed >= 4000) {
-      this.direction.x *= -1; // Reverse horizontal direction
-      this.lastDirectionChange = currentTime; // Reset the timer
-    }
-
-    if (goDown) {
-      this.y += this.height;
-    }
-
-    // Update position based on direction and velocity
-    this.x += this.direction.x * this.velocity;
+    return this.dead;
   }
+
+/**
+ * Updates the enemy's position.
+ * Moves left and right within 200 units from anchorX.
+ * If more than 200 units left of anchorX, go right.
+ * If more than 200 units right of anchorX, go left.
+ * @param {boolean} goDown - Indicates whether the enemy should move down.
+ */
+move(goDown) {
+  // Calculate the offset from the anchor position
+  const offsetFromAnchor = this.x - this.anchorX;
+
+  // Check if enemy is more than 200 units to the left or right of anchorX
+  if (offsetFromAnchor <= -160) {
+    this.direction.x = 1; // Go right
+  } else if (offsetFromAnchor >= 160) {
+    this.direction.x = -1; // Go left
+  }
+
+  if (goDown) {
+    this.y += this.height;
+  }
+
+  // Update position based on direction and velocity
+  this.x += this.direction.x * this.velocity;
+}
 
 
   /**
    * Fires a missile from the enemy's current position.
    * The missile moves downward towards the player.
+   * @param {number} fireRate - Determines the frequency of firing.
    */
   fire(fireRate) {
-    // type larger than 0 is not shooting (item)
+    // Items (type > 0) do not shoot
     if (this.type > 0) {
       return;
     }
@@ -92,7 +111,7 @@ export default class Enemy extends GameObject {
         velocity: 8,
         assets: this.assets, // Pass assets if missile needs sounds or textures
       });
-  
+      
       this.missiles.push(missile);
     }
   }

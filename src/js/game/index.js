@@ -53,8 +53,8 @@ export default class Game {
     this.lastFrameTime = performance.now();
 
     // Values that change with level up
-    this.enemyVelocity = 1.2;
-    this.enemyFireRate = 460; // The lower the value, the faster the shooting of enemies
+    this.enemyVelocity = 1.0;
+    this.enemyFireRate = 900; // The lower the value, the faster the shooting of enemies
     this.msUntilEnemyGoDown = 7000;
 
     // Show initial overlay
@@ -272,7 +272,7 @@ export default class Game {
   
         enemies.push(
           new Enemy({
-            x: 180 + i * 44,
+            x: 280 + i * 44,
             y: 64 + j * 44,
             width: 40,
             height: 40,
@@ -585,7 +585,7 @@ export default class Game {
 
   loose() {
     this.changeGameState(STATE.LOST);
-    this.assets.playLooseSound();
+    this.assets.playLaughingSound();
   
     // Stop the background music when the player loses
     this.assets.stopBackgroundMusic();

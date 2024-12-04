@@ -11,9 +11,10 @@ import playerTexture from '../../assets/graphics/santa.png';
 import welcomeTexture from '../../assets/graphics/welcome.png';
 
 // Sounds
+import boostSound from '../../assets/audio/boost.mp3';
 import fireSound from '../../assets/audio/080245_sfx_magic_84935.mp3';
 import killSound from '../../assets/audio/ding-80828.mp3';
-import looseSound from '../../assets/explosion.mp3';
+import laughingSound from '../../assets/audio/laughing.mp3';
 
 export default class Assets {
   constructor() {
@@ -35,7 +36,8 @@ export default class Assets {
 
     // Paths for audio files
     this.audioFiles = {
-      loose: looseSound,
+      boost: boostSound,
+      laughing: laughingSound,
       kill: killSound,
       fire: fireSound,
     };
@@ -46,10 +48,13 @@ export default class Assets {
     // Create an AudioContext for sound effects
     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
+    // Global volume control (0.0 to 1.0)
+    this.globalVolume = 0.8; // Default to maximum volume
+
     // Initialize background music using HTML5 Audio element
     this.backgroundMusic = new Audio(gameMusic);
     this.backgroundMusic.loop = true;
-    this.backgroundMusic.volume = 0.5; // Adjust volume as needed
+    this.backgroundMusic.volume = this.globalVolume; // Set initial volume
     this.musicStarted = false; // Flag to track if music has started
   }
 
@@ -64,7 +69,7 @@ export default class Assets {
       const texturePromises = [
         this.loadTexture(this.enemyTexture),
         this.loadTexture(this.enemyRocketTexture),
-        this.loadTexture(this.fireBoostTexture), // Corrected line
+        this.loadTexture(this.fireBoostTexture),
         this.loadTexture(this.blockTexture),
         this.loadTexture(this.playerTexture),
         this.loadTexture(this.santaRocketTexture),
@@ -96,46 +101,47 @@ export default class Assets {
     }
   }
 
-/**
- * Loads a given texture (image) and returns a Promise that resolves when the image is successfully loaded.
- * 
- * @param {HTMLImageElement} image - The `HTMLImageElement` object representing the texture to be loaded.
- *                                   This object should have its `src` property set to the image URL.
- * 
- * @returns {Promise<HTMLImageElement>} - A Promise that resolves with the `HTMLImageElement` once loaded,
- *                                        or rejects with an error if loading fails.
- */
-loadTexture(image) {
-  return new Promise((resolve, reject) => {
-    if (!image || !image.src) {
-      reject(new Error('Image element or its src property is missing.'));
-      return;
-    }
-
-    // If the image is already loaded (cached by the browser), resolve immediately
-    if (image.complete) {
-      console.log(`Texture already loaded from cache: ${image.src}`);
-      resolve(image);
-      return;
-    }
-
-    // Attach the onload handler to resolve the promise when the image loads
-    image.onload = () => {
-      console.log(`Texture loaded successfully: ${image.src}`);
-      resolve(image);
-    };
-
-    // Attach the onerror handler to reject the promise if the image fails to load
-    image.onerror = (err) => {
-      console.error(`Error loading texture (${image.src}):`, err);
-      reject(err);
-    };
-  });
-}
+  /**
+   * Loads a given texture (image) and returns a Promise that resolves when the image is successfully loaded.
+   * 
+   * @param {HTMLImageElement} image - The `HTMLImageElement` object representing the texture to be loaded.
+   *                                   This object should have its `src` property set to the image URL.
+   * 
+   * @returns {Promise<HTMLImageElement>} - A Promise that resolves with the `HTMLImageElement` once loaded,
+   *                                        or rejects with an error if loading fails.
+   */
+  loadTexture(image) {
+    return new Promise((resolve, reject) => {
+      if (!image || !image.src) {
+        reject(new Error('Image element or its src property is missing.'));
+        return;
+      }
+  
+      // If the image is already loaded (cached by the browser), resolve immediately
+      if (image.complete) {
+        console.log(`Texture already loaded from cache: ${image.src}`);
+        resolve(image);
+        return;
+      }
+  
+      // Attach the onload handler to resolve the promise when the image loads
+      image.onload = () => {
+        console.log(`Texture loaded successfully: ${image.src}`);
+        resolve(image);
+      };
+  
+      // Attach the onerror handler to reject the promise if the image fails to load
+      image.onerror = (err) => {
+        console.error(`Error loading texture (${image.src}):`, err);
+        reject(err);
+      };
+    });
+  }
 
   // Play background music
   playBackgroundMusic() {
     if (!this.musicStarted) {
+      this.backgroundMusic.volume = this.globalVolume; // Ensure volume is set
       this.backgroundMusic.play().catch((error) => {
         console.error('Error playing background music:', error);
       });
@@ -152,6 +158,17 @@ loadTexture(image) {
     }
   }
 
+  // Adjust background music volume if global volume changes
+  updateBackgroundMusicVolume() {
+    if (this.backgroundMusic) {
+      this.backgroundMusic.volume = this.globalVolume;
+    }
+  }
+
+  playBoostSound() {
+    this.playSoundEffect('boost', 1.0);
+  }
+
   // Play firing sound
   playFireSound() {
     this.playSoundEffect('fire', 1.0);
@@ -162,9 +179,9 @@ loadTexture(image) {
     this.playSoundEffect('kill', 1.0);
   }
 
-  // Play loose sound
-  playLooseSound() {
-    this.playSoundEffect('loose', 1.0);
+  // Play laughing sound
+  playLaughingSound() {
+    this.playSoundEffect('laughing', 1.0);
   }
 
   // Helper method to play sound effects using Web Audio API
@@ -178,9 +195,23 @@ loadTexture(image) {
     source.buffer = this.buffers[key];
 
     const gainNode = this.audioContext.createGain();
-    gainNode.gain.value = volume;
+    gainNode.gain.value = volume * this.globalVolume; // Adjust volume by global volume
 
     source.connect(gainNode).connect(this.audioContext.destination);
     source.start(0);
+  }
+
+  // Method to set the global volume
+  setVolume(value) {
+    // Ensure the volume is within the valid range
+    this.globalVolume = Math.max(0.0, Math.min(1.0, value));
+
+    // Update background music volume
+    this.updateBackgroundMusicVolume();
+  }
+
+  // Method to get the current global volume
+  getVolume() {
+    return this.globalVolume;
   }
 }
