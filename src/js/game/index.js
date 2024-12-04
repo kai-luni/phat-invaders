@@ -217,6 +217,7 @@ export default class Game {
     // Bind event listeners for the new state
     switch (this.gameState) {
       case STATE.WELCOME:
+        console.log("welcome");
         this.welcomeMenu.bind();
         break;
       case STATE.LOST:
@@ -569,29 +570,25 @@ export default class Game {
     }
   }
 
-  pause() {
-    this.changeGameState(STATE.PAUSED);
-    this.assets.music.pause();
-  }
-
   resume() {
     this.changeGameState(STATE.PLAYING);
-    this.assets.playBackgroundMusic();
+    this.assets.backgroundMusic.play(); // Resume the music
   }
 
   generateNextLevel() {
     this.player = this.generatePlayer();
     this.blocks = this.generateBlocks();
     this.enemies = (this.scoreBoard.level % 3 == 0) ? this.generateBoss() : this.generateEnemiesAndItems(); 
-    this.assets.music.pause();
-    this.assets.music.currentTime = 0;
 
     this.lastSpecialActionTime = Date.now();
   }
 
   loose() {
     this.changeGameState(STATE.LOST);
-    this.assets.looseSound.play();
+    this.assets.playLooseSound();
+  
+    // Stop the background music when the player loses
+    this.assets.stopBackgroundMusic();
 
     // Pass the current score to the LostMenu
     this.lostMenu.setHighScore(this.scoreBoard.score);
