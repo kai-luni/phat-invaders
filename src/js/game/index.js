@@ -6,7 +6,6 @@ import Block from './gameObjects/Block.js';
 import Enemy from './gameObjects/Enemy.js';
 import Player from './gameObjects/Player.js';
 import PauseMenu from './hud/PauseMenu.js';
-import LoadingMenu from './hud/LoadingMenu.js';
 import WelcomeMenu from './hud/WelcomeMenu.js';
 import LostMenu from './hud/LostMenu.js';
 import ScoreBoard from './hud/ScoreBoard.js';
@@ -55,7 +54,7 @@ export default class Game {
     // Values that change with level up
     this.enemyVelocity = 1.0;
     this.enemyFireRate = 900; // The lower the value, the faster the shooting of enemies
-    this.msUntilEnemyGoDown = 7000;
+    this.msUntilEnemyGoDown = 6000;
 
     // Show initial overlay
     this.showInitialOverlay();
