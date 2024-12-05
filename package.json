@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@azure/cosmos": "^4.1.1"
+    "@azure/cosmos": "^4.1.1",
+    "express": "^4.21.1"
   },
   "devDependencies": {
     "parcel-bundler": "^1.11.0",
@@ -14,7 +15,8 @@
     "dev": "parcel src/*.html --port 3002",
     "prebuild": "npm run cleanup",
     "build": "parcel build src/*.html",
-    "cleanup": "rimraf .cache dist"
+    "cleanup": "rimraf .cache dist",
+    "start": "node server.js"
   },
   "author": "benjamin Caradeuc <benjamin@caradeuc.info>",
   "license": "MIT"
