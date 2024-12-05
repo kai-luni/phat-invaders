@@ -18,7 +18,7 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 // Default route for the app
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'src/index.html')); // Adjust the path as needed
+    res.sendFile(path.join(__dirname, 'src/game.html')); // Adjust the path as needed
 });
 
 // HTTP Server
