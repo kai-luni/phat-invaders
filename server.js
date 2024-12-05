@@ -13,12 +13,12 @@ const sslOptions = {
 
 const app = express();
 
-// Serve static files (your HTML, CSS, and JS files)
+// Serve static files from the 'dist' folder
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// Default route for the app
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'src/game.html')); // Adjust the path as needed
+// Default route for the app (fallback for single-page applications, optional)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'game.html')); // Serve the built HTML file
 });
 
 // HTTP Server
