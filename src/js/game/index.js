@@ -8,6 +8,7 @@ import Player from './gameObjects/Player.js';
 import PauseMenu from './hud/PauseMenu.js';
 import WelcomeMenu from './hud/WelcomeMenu.js';
 import LostMenu from './hud/LostMenu.js';
+import HighScoreMenu from './hud/HighScoreMenu.js';
 import ScoreBoard from './hud/ScoreBoard.js';
 import BossEnemy from './gameObjects/BossEnemy.js';
 
@@ -27,6 +28,7 @@ const STATE = {
   PAUSED: 4,
   PLAYING: 5,
   BOSS: 6,
+  HIGHSCORE: 7
 };
 
 export default class Game {
@@ -54,7 +56,7 @@ export default class Game {
     // Values that change with level up
     this.enemyVelocity = 1.0;
     this.enemyFireRate = 900; // The lower the value, the faster the shooting of enemies
-    this.msUntilEnemyGoDown = 6000;
+    this.msUntilEnemyGoDown = 7500;
 
     // Show initial overlay
     this.showInitialOverlay();
@@ -155,7 +157,8 @@ export default class Game {
     // Menu event listeners
     this.welcomeMenu = new WelcomeMenu(this.canvas.width, this.canvas.height);
     this.welcomeMenu.events.on('start', this.onStart);
-
+    this.highScoreMenu = new HighScoreMenu();
+    this.highScoreMenu.events.on('start', this.onStart);
     this.lostMenu = new LostMenu();
     this.lostMenu.events.on('start', this.onStart);
 
@@ -207,7 +210,8 @@ export default class Game {
       case STATE.PAUSED:
         this.pauseMenu.unbind();
         break;
-      // Add cases for other menus if needed
+      case STATE.HIGHSCORE:
+        this.highScoreMenu.unbind();
     }
 
     // Update the game state
@@ -225,7 +229,8 @@ export default class Game {
       case STATE.PAUSED:
         this.pauseMenu.bind();
         break;
-      // Add cases for other menus if needed
+      case STATE.HIGHSCORE:
+          this.highScoreMenu.bind();
     }
   }
 
@@ -340,9 +345,6 @@ export default class Game {
         break;
       case STATE.PAUSED:
         this.pauseMenu.render();
-        break;
-      case STATE.LOST:
-        this.lostMenu.render();
         break;
       case STATE.WON:
         // Optionally render a won screen
@@ -583,7 +585,7 @@ export default class Game {
   }
 
   loose() {
-    this.changeGameState(STATE.LOST);
+    this.changeGameState(STATE.HIGHSCORE);
     this.assets.playLaughingSound();
   
     // Stop the background music when the player loses
@@ -601,9 +603,9 @@ export default class Game {
     this.scoreBoard.levelup();
 
     // Increase difficulty
-    this.enemyVelocity += 0.2;
-    this.enemyFireRate -= this.enemyFireRate / 12;
-    this.msUntilEnemyGoDown -= this.msUntilEnemyGoDown / 16;
+    this.enemyVelocity += 0.25;
+    this.enemyFireRate -= this.enemyFireRate / 8;
+    this.msUntilEnemyGoDown -= this.msUntilEnemyGoDown / 8;
     console.log("Upgrade");
     console.log("Speed " + this.enemyVelocity);
     console.log("Firerate " + this.enemyFireRate);
