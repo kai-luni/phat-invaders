@@ -29,6 +29,7 @@ export default class Player extends GameObject {
     this.fireRate = fireRate;
     this.defaultFireRate = fireRate; // Store the default fire rate
     this.lastFireTime = 0;
+    this.shootSpread = false;
   }
 
   /**
@@ -50,6 +51,10 @@ export default class Player extends GameObject {
    * Fires a missile from the player's current position with rate limiting.
    */
   fire() {
+    if (this.shootSpread) {
+      this.fireSpread();
+      return;
+    }
     const currentTime = Date.now();
     if (currentTime - this.lastFireTime >= this.fireRate) {
       const missile = new MissileSanta({
@@ -98,10 +103,18 @@ export default class Player extends GameObject {
   shootFast() {
     this.fireRate = 100; // Set fire rate to 100ms
 
-    // Revert to default fire rate after 3 seconds
+    // Revert to default fire rate after x seconds
     setTimeout(() => {
       this.fireRate = this.defaultFireRate;
-    }, 10000);
+    }, 7000);
+  }
+
+  shootTripple() {
+    this.shootSpread = true;
+
+    setTimeout(() => {
+      this.shootSpread = false;
+    }, 7000);
   }
 
   /**

@@ -272,28 +272,36 @@ export default class Game {
   }
 
 /**
- * Generates a given number of enemies
+ * Generates a given number of enemies, including three special items:
+ * 1) Fire Boost (type: 1)
+ * 2) Row Destroyer (type: 2)
+ * 3) Spread Fire (type: 3)
  */
 generateEnemiesAndItems() {
   let enemies = [];
   const totalEnemies = 12 * 6; // Total number of enemies
 
-  // Randomly pick indices for the two special items
+  // Randomly pick indices for the three special items
   const specialFireBoostIndex = Math.floor(Math.random() * totalEnemies);
-  let specialRowDestroyerIndex = Math.floor(Math.random() * (totalEnemies - 1));
 
-  // Adjust the second index if it conflicts with the first
-  if (specialRowDestroyerIndex >= specialFireBoostIndex) {
-    specialRowDestroyerIndex += 1;
-  }
+  let specialRowDestroyerIndex;
+  do {
+    specialRowDestroyerIndex = Math.floor(Math.random() * totalEnemies);
+  } while (specialRowDestroyerIndex === specialFireBoostIndex);
+
+  let specialSpreadFireIndex;
+  do {
+    specialSpreadFireIndex = Math.floor(Math.random() * totalEnemies);
+  } while (specialSpreadFireIndex === specialFireBoostIndex || specialSpreadFireIndex === specialRowDestroyerIndex);
 
   let currentIndex = 0; // Track the index of the current enemy being created
 
   for (let i = 0; i < 12; i++) {
     for (let j = 0; j < 6; j++) {
-      // Determine the type of the enemy/item
+      // Determine which special item this enemy might be
       const isFireBoostItem = currentIndex === specialFireBoostIndex;
       const isRowDestroyerItem = currentIndex === specialRowDestroyerIndex;
+      const isSpreadFireItem = currentIndex === specialSpreadFireIndex;
 
       enemies.push(
         new Enemy({
@@ -304,22 +312,31 @@ generateEnemiesAndItems() {
           texture: isFireBoostItem
             ? this.assets.fireBoostTexture
             : isRowDestroyerItem
-            ? this.assets.presentTexture // New texture for rowDestroyerItem
+            ? this.assets.presentTexture    // texture for the rowDestroyer item
+            : isSpreadFireItem
+            ? this.assets.candleTexture // texture for the spreadFire item
             : this.assets.enemyTexture,
           assets: this.assets,
           column: i,
           row: j,
           velocity: this.enemyVelocity,
-          type: isFireBoostItem ? 1 : isRowDestroyerItem ? 2 : 0, // Assign type 1 for fireBoost, 2 for rowDestroyer
+          type: isFireBoostItem
+            ? 1
+            : isRowDestroyerItem
+            ? 2
+            : isSpreadFireItem
+            ? 3
+            : 0, // Assign type 1 for fireBoost, 2 for rowDestroyer, 3 for spreadFire
         })
       );
 
-      currentIndex++; // Increment the current index
+      currentIndex++; // Move to the next enemy index
     }
   }
 
   return enemies;
 }
+
 
   generateBlocks() {
     const layout = [
@@ -509,6 +526,9 @@ generateEnemiesAndItems() {
           }
           if (enemy.type == 2) {
             this.destroyRow(enemy.row);
+          }
+          if (enemy.type == 3) {
+            this.player.shootTripple();
           }
           if (enemy.dead){
             enemy.die();

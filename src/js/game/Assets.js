@@ -1,6 +1,7 @@
 // Assets.js
 
 // Graphics
+import candleTexture from '../../assets/graphics/kerze.png';
 import enemyTexture from '../../assets/graphics/grinch_1.png';
 import enemyRocketTexture from '../../assets/graphics/schneeflocke.png';
 import fireBoostTexture from '../../assets/graphics/zuckerstange.png';
@@ -21,6 +22,8 @@ import laughingSound from '../../assets/audio/laughing.mp3';
 export default class Assets {
   constructor() {
     // Initialize Image objects and assign `src` for each texture
+    this.candleTexture = new Image();
+    this.candleTexture.src = candleTexture;
     this.enemyTexture = new Image();
     this.enemyTexture.src = enemyTexture;
     this.enemyRocketTexture = new Image();
@@ -53,7 +56,7 @@ export default class Assets {
     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
     // Global volume control (0.0 to 1.0)
-    this.globalVolume = 0.8; // Default volume
+    this.globalVolume = 0.6; // Default volume
 
     // Initialize all music tracks
     this.backgroundMusic = new Audio(gameMusic);
