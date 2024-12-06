@@ -1,7 +1,6 @@
 // Assets.js
 
 // Graphics
-import gameMusic from '../../assets/audio/happy_christmas_background_music_small.mp3';
 import enemyTexture from '../../assets/graphics/grinch_1.png';
 import enemyRocketTexture from '../../assets/graphics/schneeflocke.png';
 import fireBoostTexture from '../../assets/graphics/zuckerstange.png';
@@ -11,8 +10,10 @@ import playerTexture from '../../assets/graphics/santa.png';
 import welcomeTexture from '../../assets/graphics/welcome.png';
 
 // Sounds
+import bossMusic from '../../assets/audio/boss_music.mp3';
 import boostSound from '../../assets/audio/boost.mp3';
 import fireSound from '../../assets/audio/080245_sfx_magic_84935.mp3';
+import gameMusic from '../../assets/audio/happy_christmas_background_music_small.mp3';
 import killSound from '../../assets/audio/ding-80828.mp3';
 import laughingSound from '../../assets/audio/laughing.mp3';
 
@@ -49,22 +50,28 @@ export default class Assets {
     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
     // Global volume control (0.0 to 1.0)
-    this.globalVolume = 0.8; // Default to maximum volume
+    this.globalVolume = 0.8; // Default volume
 
-    // Initialize background music using HTML5 Audio element
+    // Initialize all music tracks
     this.backgroundMusic = new Audio(gameMusic);
     this.backgroundMusic.loop = true;
-    this.backgroundMusic.volume = this.globalVolume; // Set initial volume
-    this.musicStarted = false; // Flag to track if music has started
+    this.backgroundMusic.volume = this.globalVolume;
+
+    this.bossMusic = new Audio(bossMusic);
+    this.bossMusic.loop = true;
+    this.bossMusic.volume = this.globalVolume;
+
+    // Keep track of the current music playing
+    this.currentMusic = null;
   }
 
   async load() {
     try {
-      // Load and decode all audio files except the background music
+      // Load and decode all audio files (sound effects)
       const audioPromises = Object.keys(this.audioFiles).map((key) =>
         this.loadAudio(key, this.audioFiles[key])
       );
-  
+
       // Load all textures
       const texturePromises = [
         this.loadTexture(this.enemyTexture),
@@ -74,16 +81,15 @@ export default class Assets {
         this.loadTexture(this.playerTexture),
         this.loadTexture(this.santaRocketTexture),
         this.loadTexture(this.welcomeTexture),
-        // ... include any other textures you have
       ];
-  
+
       // Wait for all assets to load
       await Promise.all([...audioPromises, ...texturePromises]);
-  
+
       console.log('All assets loaded successfully');
     } catch (error) {
       console.error('Error loading assets:', error);
-      throw error; // Rethrow the error to propagate it
+      throw error;
     }
   }
 
@@ -103,12 +109,6 @@ export default class Assets {
 
   /**
    * Loads a given texture (image) and returns a Promise that resolves when the image is successfully loaded.
-   * 
-   * @param {HTMLImageElement} image - The `HTMLImageElement` object representing the texture to be loaded.
-   *                                   This object should have its `src` property set to the image URL.
-   * 
-   * @returns {Promise<HTMLImageElement>} - A Promise that resolves with the `HTMLImageElement` once loaded,
-   *                                        or rejects with an error if loading fails.
    */
   loadTexture(image) {
     return new Promise((resolve, reject) => {
@@ -116,21 +116,18 @@ export default class Assets {
         reject(new Error('Image element or its src property is missing.'));
         return;
       }
-  
-      // If the image is already loaded (cached by the browser), resolve immediately
+
       if (image.complete) {
         console.log(`Texture already loaded from cache: ${image.src}`);
         resolve(image);
         return;
       }
-  
-      // Attach the onload handler to resolve the promise when the image loads
+
       image.onload = () => {
         console.log(`Texture loaded successfully: ${image.src}`);
         resolve(image);
       };
-  
-      // Attach the onerror handler to reject the promise if the image fails to load
+
       image.onerror = (err) => {
         console.error(`Error loading texture (${image.src}):`, err);
         reject(err);
@@ -138,48 +135,69 @@ export default class Assets {
     });
   }
 
-  // Play background music
-  playBackgroundMusic() {
-    if (!this.musicStarted) {
-      this.backgroundMusic.volume = this.globalVolume; // Ensure volume is set
-      this.backgroundMusic.play().catch((error) => {
-        console.error('Error playing background music:', error);
-      });
-      this.musicStarted = true;
+  /**
+   * Play a specific music track. Possible values could be 'background' or 'boss'.
+   * This will ensure only one music track is playing at a time.
+   */
+  playMusic(track = 'background') {
+    console.log(track);
+    // Stop currently playing music if any
+    if (this.currentMusic) {
+      this.currentMusic.pause();
+      this.currentMusic.currentTime = 0;
+    }
+
+    // Select the track to play
+    let chosenMusic = null;
+    switch (track) {
+      case 'boss':
+        chosenMusic = this.bossMusic;
+        break;
+      case 'background':
+      default:
+        chosenMusic = this.backgroundMusic;
+        break;
+    }
+
+    // Update chosen track volume and play
+    chosenMusic.volume = this.globalVolume;
+    chosenMusic.play().catch((error) => {
+      console.error(`Error playing ${track} music:`, error);
+    });
+
+    // Set this track as the currently playing music
+    this.currentMusic = chosenMusic;
+  }
+
+  // Stop any currently playing music
+  stopMusic() {
+    if (this.currentMusic) {
+      this.currentMusic.pause();
+      this.currentMusic.currentTime = 0;
+      this.currentMusic = null;
     }
   }
 
-  // Stop background music
-  stopBackgroundMusic() {
-    if (this.musicStarted) {
-      this.backgroundMusic.pause();
-      this.backgroundMusic.currentTime = 0;
-      this.musicStarted = false;
+  // Adjust the volume of the currently playing music
+  updateMusicVolume() {
+    if (this.currentMusic) {
+      this.currentMusic.volume = this.globalVolume;
     }
   }
 
-  // Adjust background music volume if global volume changes
-  updateBackgroundMusicVolume() {
-    if (this.backgroundMusic) {
-      this.backgroundMusic.volume = this.globalVolume;
-    }
-  }
-
+  // Sound effects
   playBoostSound() {
     this.playSoundEffect('boost', 1.0);
   }
 
-  // Play firing sound
   playFireSound() {
     this.playSoundEffect('fire', 1.0);
   }
 
-  // Play kill sound
   playKillSound() {
     this.playSoundEffect('kill', 1.0);
   }
 
-  // Play laughing sound
   playLaughingSound() {
     this.playSoundEffect('laughing', 1.0);
   }
@@ -195,22 +213,20 @@ export default class Assets {
     source.buffer = this.buffers[key];
 
     const gainNode = this.audioContext.createGain();
-    gainNode.gain.value = volume * this.globalVolume; // Adjust volume by global volume
+    gainNode.gain.value = volume * this.globalVolume;
 
     source.connect(gainNode).connect(this.audioContext.destination);
     source.start(0);
   }
 
-  // Method to set the global volume
   setVolume(value) {
     // Ensure the volume is within the valid range
     this.globalVolume = Math.max(0.0, Math.min(1.0, value));
 
-    // Update background music volume
-    this.updateBackgroundMusicVolume();
+    // Update music volume
+    this.updateMusicVolume();
   }
 
-  // Method to get the current global volume
   getVolume() {
     return this.globalVolume;
   }

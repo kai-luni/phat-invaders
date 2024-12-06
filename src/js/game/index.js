@@ -170,26 +170,29 @@ export default class Game {
     if (
       this.gameState === STATE.WELCOME ||
       this.gameState === STATE.LOST ||
-      this.gameState === STATE.WON
+      this.gameState === STATE.WON ||
+      this.gameState === STATE.HIGHSCORE
     ) {
       this.startGame();
     }
   }
 
   startGame() {
+    console.log('start game');
     // Initialize or reset game objects
     this.blocks = this.generateBlocks();
     this.player = this.generatePlayer();
     
     this.scoreBoard = new ScoreBoard();
-    console.log("level:::::::::::: " + this.scoreBoard.level);
     this.enemies = (this.scoreBoard.level % 3 == 0) ? this.generateBoss() : this.generateEnemiesAndItems();
     if (this.scoreBoard.level % 3 == 0){
-      this.changeGameState(STATE.BOSS)
+      this.changeGameState(STATE.BOSS);
+      this.assets.playMusic('boss');
     } else {
       this.changeGameState(STATE.PLAYING);
+      this.assets.playMusic('background');
     }  
-    this.assets.playBackgroundMusic();
+    
   }
 
   onResume() {
@@ -214,13 +217,13 @@ export default class Game {
         this.highScoreMenu.unbind();
     }
 
+    console.log("New State: ", newState);
     // Update the game state
     this.gameState = newState;
 
     // Bind event listeners for the new state
     switch (this.gameState) {
       case STATE.WELCOME:
-        console.log("welcome");
         this.welcomeMenu.bind();
         break;
       case STATE.LOST:
@@ -250,7 +253,7 @@ export default class Game {
     enemies.push(
       new BossEnemy({
         x: 100,
-        y: 100,
+        y: 130,
         texture: this.assets.enemyTexture,
         assets: this.assets,
         canvas: this.canvas
@@ -572,15 +575,20 @@ export default class Game {
   }
 
   resume() {
-    this.changeGameState(STATE.PLAYING);
-    this.assets.backgroundMusic.play(); // Resume the music
   }
 
   generateNextLevel() {
+    if (this.scoreBoard.level % 3 == 0){
+      this.changeGameState(STATE.BOSS);
+      this.assets.playMusic('boss');
+    } else {
+      this.changeGameState(STATE.PLAYING);
+      this.assets.playMusic('background');
+    } 
+    
     this.player = this.generatePlayer();
     this.blocks = this.generateBlocks();
-    this.enemies = (this.scoreBoard.level % 3 == 0) ? this.generateBoss() : this.generateEnemiesAndItems(); 
-
+    this.enemies = (this.gameState === STATE.BOSS) ? this.generateBoss() : this.generateEnemiesAndItems(); 
     this.lastSpecialActionTime = Date.now();
   }
 
@@ -589,13 +597,13 @@ export default class Game {
     this.assets.playLaughingSound();
   
     // Stop the background music when the player loses
-    this.assets.stopBackgroundMusic();
+    this.assets.stopMusic();
 
     // Pass the current score to the LostMenu
     this.lostMenu.setHighScore(this.scoreBoard.score);
 
-    this.scoreBoard.reset();
-    this.generateNextLevel();
+    //this.scoreBoard.reset();
+    //this.generateNextLevel();
   }
 
   win() {
@@ -604,7 +612,7 @@ export default class Game {
 
     // Increase difficulty
     this.enemyVelocity += 0.25;
-    this.enemyFireRate -= this.enemyFireRate / 8;
+    this.enemyFireRate -= this.enemyFireRate / 4;
     this.msUntilEnemyGoDown -= this.msUntilEnemyGoDown / 8;
     console.log("Upgrade");
     console.log("Speed " + this.enemyVelocity);

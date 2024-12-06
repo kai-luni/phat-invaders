@@ -172,7 +172,7 @@ export default class HighScoreMenu {
   onBackButtonClick() {
     // Hide the modal and emit an event if needed
     this.hideModal();
-    this.events.emit('back');
+    this.events.emit('start');
   }
 
   showModal() {

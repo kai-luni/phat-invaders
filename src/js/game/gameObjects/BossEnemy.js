@@ -52,7 +52,8 @@ export default class BossEnemy extends GameObject {
     if (this.type > 0) {
       return;
     }
-    if (Math.random() < 10 / fireRate) {
+    // firerate starts at 900 and becomes smaller, when the second term is 1 or larger the enemey shoots always
+    if (Math.random() < 12 / fireRate) {
       const missile = new MissileGrinch({
         x: this.x + this.width / 2,
         y: this.y + this.height,
