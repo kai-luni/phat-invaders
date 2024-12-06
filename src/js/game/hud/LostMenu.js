@@ -1,5 +1,4 @@
 // LostMenu.js
-import { canvas } from '../Canvas.js';
 import Events from '../Events.js';
 
 export default class LostMenu {
@@ -103,7 +102,6 @@ export default class LostMenu {
     this.modalSubmitButton.style.fontSize = '16px';
     this.modalSubmitButton.style.cursor = 'pointer';
 
-    // Try Again button (no functionality yet)
     this.tryAgainButton = document.createElement('button');
     this.tryAgainButton.textContent = 'Try again';
     this.tryAgainButton.style.width = '100%';
@@ -150,7 +148,7 @@ export default class LostMenu {
     // Bind the submit button click event
     this.modalSubmitButton.addEventListener('click', this.onModalSubmit.bind(this));
 
-    // Bind the try again button click event (no functionality yet)
+    // Bind the try again button click event (emit 'start')
     this.tryAgainButton.addEventListener('click', this.onTryAgainClick.bind(this));
   }
 
@@ -174,6 +172,7 @@ export default class LostMenu {
       const data = {
         name: playerName,
         score: this.highScore,
+        version: "2"
       };
 
       // Include the email if provided
@@ -211,6 +210,9 @@ export default class LostMenu {
         this.emailInput.style.opacity = disabledOpacity;
         this.modalSubmitButton.style.opacity = disabledOpacity;
         this.tryAgainButton.style.opacity = disabledOpacity;
+
+        // Emit 'highscore' event after successful submission
+        this.events.emit('highscore');
       } else {
         this.messageDisplay.textContent = 'Failed to submit high score. Try again!';
       }
@@ -220,10 +222,10 @@ export default class LostMenu {
     }
   }
 
-  // Event handler for the try again button click (no functionality yet)
+  // Event handler for the try again button click (emit 'start')
   onTryAgainClick() {
-    // No functionality for now
-    console.log('Try Again button clicked (no functionality yet)');
+    console.log('Try Again button clicked');
+    this.events.emit('start');
   }
 
   showModal() {
@@ -280,3 +282,4 @@ export default class LostMenu {
     this.modalOverlay.remove();
   }
 }
+

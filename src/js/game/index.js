@@ -49,14 +49,10 @@ export default class Game {
     // Initialize event handlers
     this.onStart = this.onStart.bind(this);
     this.onResume = this.onResume.bind(this);
+    this.onHighscore = this.onHighscore.bind(this);
 
     // Initialize last frame time for deltaTime calculation
     this.lastFrameTime = performance.now();
-
-    // Values that change with level up
-    this.enemyVelocity = 1.0;
-    this.enemyFireRate = 900; // The lower the value, the faster the shooting of enemies
-    this.msUntilEnemyGoDown = 7500;
 
     // Show initial overlay
     this.showInitialOverlay();
@@ -161,6 +157,7 @@ export default class Game {
     this.highScoreMenu.events.on('start', this.onStart);
     this.lostMenu = new LostMenu();
     this.lostMenu.events.on('start', this.onStart);
+    this.lostMenu.events.on('highscore', this.onHighscore);
 
     this.pauseMenu = new PauseMenu();
     this.pauseMenu.events.on('resume', this.onResume);
@@ -170,28 +167,40 @@ export default class Game {
     if (
       this.gameState === STATE.WELCOME ||
       this.gameState === STATE.LOST ||
-      this.gameState === STATE.WON ||
       this.gameState === STATE.HIGHSCORE
     ) {
       this.startGame();
     }
   }
 
-  startGame() {
-    console.log('start game');
-    // Initialize or reset game objects
-    this.blocks = this.generateBlocks();
-    this.player = this.generatePlayer();
-    
-    this.scoreBoard = new ScoreBoard();
-    this.enemies = (this.scoreBoard.level % 3 == 0) ? this.generateBoss() : this.generateEnemiesAndItems();
+  onHighscore() {
+    this.changeGameState(STATE.HIGHSCORE);
+  }
+
+  generateNextLevel() {
     if (this.scoreBoard.level % 3 == 0){
       this.changeGameState(STATE.BOSS);
       this.assets.playMusic('boss');
     } else {
       this.changeGameState(STATE.PLAYING);
       this.assets.playMusic('background');
-    }  
+    } 
+    
+    this.player = this.generatePlayer();
+    this.blocks = this.generateBlocks();
+    this.enemies = (this.gameState === STATE.BOSS) ? this.generateBoss() : this.generateEnemiesAndItems(); 
+    this.lastSpecialActionTime = Date.now();
+  }
+
+  startGame() {
+    // Values that change with level up
+    this.enemyVelocity = 1.0;
+    this.enemyFireRate = 900; // The lower the value, the faster the shooting of enemies
+    this.msUntilEnemyGoDown = 7500;
+    
+    this.scoreBoard = new ScoreBoard();
+
+    this.generateNextLevel();
     
   }
 
@@ -348,9 +357,6 @@ export default class Game {
         break;
       case STATE.PAUSED:
         this.pauseMenu.render();
-        break;
-      case STATE.WON:
-        // Optionally render a won screen
         break;
       case STATE.PLAYING:
         this.scoreBoard.render();
@@ -577,23 +583,9 @@ export default class Game {
   resume() {
   }
 
-  generateNextLevel() {
-    if (this.scoreBoard.level % 3 == 0){
-      this.changeGameState(STATE.BOSS);
-      this.assets.playMusic('boss');
-    } else {
-      this.changeGameState(STATE.PLAYING);
-      this.assets.playMusic('background');
-    } 
-    
-    this.player = this.generatePlayer();
-    this.blocks = this.generateBlocks();
-    this.enemies = (this.gameState === STATE.BOSS) ? this.generateBoss() : this.generateEnemiesAndItems(); 
-    this.lastSpecialActionTime = Date.now();
-  }
 
   loose() {
-    this.changeGameState(STATE.HIGHSCORE);
+    this.changeGameState(STATE.LOST);
     this.assets.playLaughingSound();
   
     // Stop the background music when the player loses

@@ -10,28 +10,29 @@ export default class HighScoreMenu {
   }
 
   createModal() {
-    // Create the modal overlay
-    this.modalOverlay = document.createElement('div');
-    this.modalOverlay.style.position = 'fixed';
-    this.modalOverlay.style.top = '0';
-    this.modalOverlay.style.left = '0';
-    this.modalOverlay.style.width = '100%';
-    this.modalOverlay.style.height = '100%';
-    this.modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-    this.modalOverlay.style.display = 'none'; // Hidden by default
-    this.modalOverlay.style.zIndex = '1000'; // Ensure it appears above other elements
+  // Create the modal overlay
+  this.modalOverlay = document.createElement('div');
+  this.modalOverlay.style.position = 'fixed';
+  this.modalOverlay.style.top = '0';
+  this.modalOverlay.style.left = '0';
+  this.modalOverlay.style.width = '100%';
+  this.modalOverlay.style.height = '100%';
+  // Change the alpha value from 0.8 to 0.3 for a more translucent background
+  this.modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+  this.modalOverlay.style.display = 'none'; // Hidden by default
+  this.modalOverlay.style.zIndex = '1000'; // Ensure it appears above other elements
 
-    // Create the modal content container
-    this.modalContent = document.createElement('div');
-    this.modalContent.style.position = 'absolute';
-    this.modalContent.style.top = '50%';
-    this.modalContent.style.left = '50%';
-    this.modalContent.style.transform = 'translate(-50%, -50%)';
-    this.modalContent.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'; // Translucent background
-    this.modalContent.style.padding = '20px';
-    this.modalContent.style.borderRadius = '5px';
-    this.modalContent.style.textAlign = 'center';
-    this.modalContent.style.width = '400px';
+  // Create the modal content container
+  this.modalContent = document.createElement('div');
+  this.modalContent.style.position = 'absolute';
+  this.modalContent.style.top = '50%';
+  this.modalContent.style.left = '50%';
+  this.modalContent.style.transform = 'translate(-50%, -50%)';
+  this.modalContent.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'; // Translucent background for the content
+  this.modalContent.style.padding = '20px';
+  this.modalContent.style.borderRadius = '5px';
+  this.modalContent.style.textAlign = 'center';
+  this.modalContent.style.width = '400px';
 
     // Create the heading
     const heading = document.createElement('h2');
@@ -49,7 +50,7 @@ export default class HighScoreMenu {
 
     // Back button to return to the previous menu
     this.backButton = document.createElement('button');
-    this.backButton.textContent = 'Back';
+    this.backButton.textContent = 'Play Again';
     this.backButton.style.width = '100%';
     this.backButton.style.padding = '10px';
     this.backButton.style.marginTop = '20px';
