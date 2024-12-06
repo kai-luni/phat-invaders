@@ -33,6 +33,8 @@ export default class Enemy extends GameObject {
     this.row = row;
 
     this.anchorX = x; // Store the original x coordinate as the anchor
+
+    this.dead = false;
   }
 
   /**
@@ -40,8 +42,12 @@ export default class Enemy extends GameObject {
    * Plays the kill sound effect.
    */
   die() {
-    this.assets.playKillSound();
-    // Additional logic for when the enemy dies can be added here
+    this.dead = true;
+    if (this.type > 0) {
+      this.assets.playBoostSound();
+    } else {
+      this.assets.playKillSound();
+    }
   }
 
   /**
@@ -50,18 +56,18 @@ export default class Enemy extends GameObject {
    * @returns {boolean} - Returns true if the missile hits the enemy.
    */
   hit(rocket) {
-    this.dead = (
+    let hit = (
       rocket.x < this.x + this.width &&
       rocket.x + rocket.width > this.x &&
       rocket.y < this.y + this.height &&
       rocket.y + rocket.height > this.y
     );
 
-    if (this.type > 0 && this.dead) {
-      this.assets.playBoostSound();
-    }
+    if (hit){
+      this.die();
+    }    
 
-    return this.dead;
+    return hit;
   }
 
 /**

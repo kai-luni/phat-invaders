@@ -271,43 +271,55 @@ export default class Game {
     return enemies;
   }
 
-  /**
-   * Generates a given number of enemies
-   */
-  generateEnemiesAndItems() {
-    let enemies = [];
-    const totalEnemies = 12 * 6; // Total number of enemies
-    const specialEnemyIndex = Math.floor(Math.random() * totalEnemies); // Pick a random index
-  
-    let currentIndex = 0; // Track the index of the current enemy being created
-  
-    for (let i = 0; i < 12; i++) {
-      for (let j = 0; j < 6; j++) {
-        // Determine if this enemy is the special one
-        const isFireBoostItem = currentIndex === specialEnemyIndex;
-  
-        enemies.push(
-          new Enemy({
-            x: 280 + i * 44,
-            y: 64 + j * 44,
-            width: 40,
-            height: 40,
-            texture: isFireBoostItem ? this.assets.fireBoostTexture : this.assets.enemyTexture,
-            assets: this.assets,
-            column: i,
-            row: j,
-            velocity: this.enemyVelocity,
-            type: isFireBoostItem ? 1 : 0, // Assign type 1 if special
-          })
-        );
-  
-        currentIndex++; // Increment the current index
-      }
-    }
-  
-    return enemies;
+/**
+ * Generates a given number of enemies
+ */
+generateEnemiesAndItems() {
+  let enemies = [];
+  const totalEnemies = 12 * 6; // Total number of enemies
+
+  // Randomly pick indices for the two special items
+  const specialFireBoostIndex = Math.floor(Math.random() * totalEnemies);
+  let specialRowDestroyerIndex = Math.floor(Math.random() * (totalEnemies - 1));
+
+  // Adjust the second index if it conflicts with the first
+  if (specialRowDestroyerIndex >= specialFireBoostIndex) {
+    specialRowDestroyerIndex += 1;
   }
-  
+
+  let currentIndex = 0; // Track the index of the current enemy being created
+
+  for (let i = 0; i < 12; i++) {
+    for (let j = 0; j < 6; j++) {
+      // Determine the type of the enemy/item
+      const isFireBoostItem = currentIndex === specialFireBoostIndex;
+      const isRowDestroyerItem = currentIndex === specialRowDestroyerIndex;
+
+      enemies.push(
+        new Enemy({
+          x: 280 + i * 44,
+          y: 64 + j * 44,
+          width: 40,
+          height: 40,
+          texture: isFireBoostItem
+            ? this.assets.fireBoostTexture
+            : isRowDestroyerItem
+            ? this.assets.presentTexture // New texture for rowDestroyerItem
+            : this.assets.enemyTexture,
+          assets: this.assets,
+          column: i,
+          row: j,
+          velocity: this.enemyVelocity,
+          type: isFireBoostItem ? 1 : isRowDestroyerItem ? 2 : 0, // Assign type 1 for fireBoost, 2 for rowDestroyer
+        })
+      );
+
+      currentIndex++; // Increment the current index
+    }
+  }
+
+  return enemies;
+}
 
   generateBlocks() {
     const layout = [
@@ -495,6 +507,9 @@ export default class Game {
           if (enemy.type == 1) {
             this.player.shootFast();
           }
+          if (enemy.type == 2) {
+            this.destroyRow(enemy.row);
+          }
           if (enemy.dead){
             enemy.die();
             this.scoreBoard.incrementScore();
@@ -578,6 +593,28 @@ export default class Game {
     if (!this.enemies.length) {
       this.win();
     }
+  }
+
+  /**
+   * Destroys all enemies in the specified row.
+   * 
+   * This method iterates through all enemies in the game, checks if they belong to the given row,
+   * and triggers their `die()` method. Optionally, it also removes the dead enemies from the game.
+   * 
+   * @param {number} row - The row number to target for destruction.
+   */
+  destroyRow(row) {
+    // Iterate over all enemies
+    this.enemies.forEach((enemy) => {
+      // Check if the enemy is in the specified row
+      if (enemy.row === row) {
+        // Call the die method on the enemy
+        enemy.die();
+      }
+    });
+
+    // Remove enemies from the array if they're marked as dead
+    this.enemies = this.enemies.filter((enemy) => enemy.row !== row || !enemy.dead);
   }
 
   resume() {

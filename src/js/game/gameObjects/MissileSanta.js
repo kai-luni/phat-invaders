@@ -16,13 +16,14 @@ export default class MissileSanta extends GameObject {
    * @param {Integer} params.y - Vertical position of the missile.
    * @param {Integer} [params.width=20] - Width of the missile.
    * @param {Integer} [params.height=20] - Height of the missile.
+   * @param {Integer} [params.directionX=0] - Horizontal direction of missile
    * @param {Integer} [params.directionY=-1] - Vertical direction of the missile (-1 for up, 1 for down).
    * @param {Integer} [params.velocity=5] - Speed of the missile.
    */
-  constructor({ x, y, width = 18, height = 18, directionY = -1, velocity = 5 }) {
+  constructor({ x, y, width = 18, height = 18, directionX = 0, directionY = -1, velocity = 5 }) {
     super({ x, y, width, height });
 
-    this.direction = { x: 0, y: directionY }; // Default to moving up
+    this.direction = { x: directionX, y: directionY }; // Default to moving up
     this.velocity = velocity; // Default speed of the missile
 
     this.assets = new Assets();

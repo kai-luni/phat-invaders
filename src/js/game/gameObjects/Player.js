@@ -54,10 +54,39 @@ export default class Player extends GameObject {
     if (currentTime - this.lastFireTime >= this.fireRate) {
       const missile = new MissileSanta({
         x: this.x + this.width / 2,
-        y: this.y,
+        y: this.y
       });
 
       this.missiles.push(missile);
+      this.assets.playFireSound();
+      this.lastFireTime = currentTime; // Update the last fire time
+    }
+  }
+
+  /**
+   * Fires a missile from the player's current position with rate limiting.
+   */
+  fireSpread() {
+    const currentTime = Date.now();
+    if (currentTime - this.lastFireTime >= this.fireRate) {
+      const missileLeft= new MissileSanta({
+        x: this.x + this.width / 2,
+        y: this.y,
+        directionX: -0.2
+      });
+      const missile = new MissileSanta({
+        x: this.x + this.width / 2,
+        y: this.y
+      });
+      const missileRight = new MissileSanta({
+        x: this.x + this.width / 2,
+        y: this.y,
+        directionX: 0.2
+      });
+
+      this.missiles.push(missileLeft);
+      this.missiles.push(missile);
+      this.missiles.push(missileRight);
       this.assets.playFireSound();
       this.lastFireTime = currentTime; // Update the last fire time
     }

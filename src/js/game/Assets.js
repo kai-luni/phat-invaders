@@ -5,6 +5,7 @@ import enemyTexture from '../../assets/graphics/grinch_1.png';
 import enemyRocketTexture from '../../assets/graphics/schneeflocke.png';
 import fireBoostTexture from '../../assets/graphics/zuckerstange.png';
 import santaRocketTexture from '../../assets/graphics/kugel_rot.png';
+import presentTexture from '../../assets/graphics/geschenk.png';
 import blockTexture from '../../assets/graphics/kugel_gruen.png';
 import playerTexture from '../../assets/graphics/santa.png';
 import welcomeTexture from '../../assets/graphics/welcome.png';
@@ -30,6 +31,8 @@ export default class Assets {
     this.blockTexture.src = blockTexture;
     this.playerTexture = new Image();
     this.playerTexture.src = playerTexture;
+    this.presentTexture = new Image();
+    this.presentTexture.src = presentTexture;
     this.santaRocketTexture = new Image();
     this.santaRocketTexture.src = santaRocketTexture;
     this.welcomeTexture = new Image();
@@ -79,6 +82,7 @@ export default class Assets {
         this.loadTexture(this.fireBoostTexture),
         this.loadTexture(this.blockTexture),
         this.loadTexture(this.playerTexture),
+        this.loadTexture(this.presentTexture),
         this.loadTexture(this.santaRocketTexture),
         this.loadTexture(this.welcomeTexture),
       ];
