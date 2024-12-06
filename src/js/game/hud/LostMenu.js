@@ -172,7 +172,7 @@ export default class LostMenu {
       const data = {
         name: playerName,
         score: this.highScore,
-        version: "2"
+        version: 2
       };
 
       // Include the email if provided
