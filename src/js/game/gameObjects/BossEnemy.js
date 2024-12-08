@@ -14,33 +14,30 @@ export default class BossEnemy extends GameObject {
    * @param {number} params.y - Vertical position of the boss enemy.
    * @param {HTMLImageElement} params.texture - Image texture for the boss enemy.
    * @param {Assets} params.assets - Assets containing game resources.
-   * @param {number} [params.column=0] - Column of the boss enemy.
-   * @param {number} [params.row=0] - Row of the boss enemy.
-   * @param {number} [params.velocity=1] - Movement speed of the boss enemy.
+   * @param {HTMLImageElement} [params.textureShocked] - Alternative shocked texture for the boss.
+   * @param {number} [params.velocity=2] - Movement speed of the boss enemy.
    * @param {number} [params.health=20] - Health points of the boss enemy.
    */
-  constructor({ x, y, texture, assets, canvas, width = 200, height = 200, velocity = 2, health = 20 }) {
+  constructor({ x, y, texture, textureShocked, assets, canvas, width = 200, height = 200, velocity = 2, health = 20 }) {
     super({ x, y, width, height });
 
     this.assets = assets;
-    this.texture = texture;
+    this.textureNormal = texture;        // Store the normal texture
+    this.textureShocked = textureShocked; // Store the shocked texture
+    this.texture = this.textureNormal;   // Current texture starts normal
     this.velocity = velocity;
     this.canvas = canvas;
 
-    this.direction = { x: 1, y: 0 }; // Enemies move horizontally by default
+    this.direction = { x: 1, y: 0 };
     this.missiles = [];
 
-    /**
-     * Health points of the boss enemy.
-     * @type {number}
-     */
-    this.health = health; // Takes 20 hits to defeat
-
-    /**
-     * Indicates if the boss enemy is dead.
-     * @type {boolean}
-     */
+    this.health = health;
     this.dead = false;
+
+    // Timing for shocked state
+    this.shocked = false;
+    this.shockedDuration = 300; // milliseconds the boss stays shocked after hit
+    this.shockedUntil = 0;
   }
 
   /**
@@ -52,7 +49,6 @@ export default class BossEnemy extends GameObject {
     if (this.type > 0) {
       return;
     }
-    // firerate starts at 900 and becomes smaller, when the second term is 1 or larger the enemey shoots always
     if (Math.random() < 12 / fireRate) {
       const missile = new MissileGrinch({
         x: this.x + this.width / 2,
@@ -61,16 +57,16 @@ export default class BossEnemy extends GameObject {
         height: 40,
         directionY: 1,      // Enemy missiles move downward
         velocity: 8,
-        assets: this.assets, // Pass assets if missile needs sounds or textures
+        assets: this.assets,
       });
-  
+
       this.missiles.push(missile);
     }
   }
 
   /**
    * Checks if the boss enemy is hit by a given missile (rocket).
-   * Decreases health if hit.
+   * Decreases health if hit and triggers shocked state.
    * @param {GameObject} rocket - The missile to check collision with.
    * @returns {boolean} - Returns true if the missile hits the boss enemy.
    */
@@ -84,10 +80,15 @@ export default class BossEnemy extends GameObject {
 
     if (isHit) {
       this.health -= 1; // Decrease health by 1
+      // Trigger shocked state
+      this.shocked = true;
+      this.shockedUntil = Date.now() + this.shockedDuration;
+      this.texture = this.textureShocked;
+
       if (this.health <= 0) {
         this.die();
       } else {
-        //this.assets.playHitSound(); // Play a hit sound if you have one
+        //this.assets.playHitSound();
       }
     }
 
@@ -96,44 +97,42 @@ export default class BossEnemy extends GameObject {
 
   /**
    * Handles the boss enemy's death.
-   * Plays the kill sound effect.
    */
   die() {
-    this.dead = true; // Mark as dead
-    this.assets.playKillSound(); // Play the kill sound
-    // Additional logic for when the boss enemy dies can be added here
+    this.dead = true;
+    this.assets.playKillSound();
   }
 
   /**
    * Updates the enemy's position.
-   * @param {boolean} changeDirection - Indicates whether the enemy should change direction.
-   * @param {boolean} goDown - Go down in the direction of Santa.
+   * @param {boolean} goDown - Move down in the direction of Santa.
    */
   move(goDown) {
     // Change direction if boss reaches the left or right edge of the canvas
     if (this.x <= 0) {
-        this.direction.x = 1;
+      this.direction.x = 1;
     }
     if (this.x + this.width >= this.canvas.width) {
-        this.direction.x = -1;
+      this.direction.x = -1;
     }
-  
-    // Move down if required
+
     if (goDown) {
-      this.y += this.height / 5; // Adjust downward movement
+      this.y += this.height / 5;
     }
-  
-    // Update position based on direction and velocity
+
     this.x += this.direction.x * this.velocity;
   }
-  
 
   /**
    * Renders the boss enemy and its missiles on the canvas.
-   * Updates missile positions and removes off-screen missiles.
    */
   render() {
-    // Optionally, you can display the boss's health bar above it
+    // Check if shocked state should end
+    if (this.shocked && Date.now() > this.shockedUntil) {
+      this.shocked = false;
+      this.texture = this.textureNormal;
+    }
+
     this.canvas.ctx.drawImage(this.texture, this.x, this.y, this.width, this.height);
 
     // Draw health bar
@@ -169,7 +168,6 @@ export default class BossEnemy extends GameObject {
     ctx.fillStyle = 'green';
     ctx.fillRect(x, y, barWidth * healthProportion, barHeight);
 
-    // Optional: Draw border around health bar
     ctx.strokeStyle = 'black';
     ctx.strokeRect(x, y, barWidth, barHeight);
   }

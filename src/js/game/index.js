@@ -264,6 +264,7 @@ export default class Game {
         x: 100,
         y: 130,
         texture: this.assets.enemyTexture,
+        textureShocked: this.assets.enemyShockedTexture,
         assets: this.assets,
         canvas: this.canvas
       })

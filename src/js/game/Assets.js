@@ -3,6 +3,7 @@
 // Graphics
 import candleTexture from '../../assets/graphics/kerze.png';
 import enemyTexture from '../../assets/graphics/grinch_1.png';
+import enemyShockedTexture from '../../assets/graphics/grinch_2.png';
 import enemyRocketTexture from '../../assets/graphics/schneeflocke.png';
 import fireBoostTexture from '../../assets/graphics/zuckerstange.png';
 import santaRocketTexture from '../../assets/graphics/kugel_rot.png';
@@ -26,6 +27,8 @@ export default class Assets {
     this.candleTexture.src = candleTexture;
     this.enemyTexture = new Image();
     this.enemyTexture.src = enemyTexture;
+    this.enemyShockedTexture = new Image();
+    this.enemyShockedTexture.src = enemyShockedTexture;
     this.enemyRocketTexture = new Image();
     this.enemyRocketTexture.src = enemyRocketTexture;
     this.fireBoostTexture = new Image();
@@ -81,6 +84,7 @@ export default class Assets {
       // Load all textures
       const texturePromises = [
         this.loadTexture(this.enemyTexture),
+        this.loadTexture(this.enemyShockedTexture),
         this.loadTexture(this.enemyRocketTexture),
         this.loadTexture(this.fireBoostTexture),
         this.loadTexture(this.blockTexture),
