@@ -17,7 +17,6 @@ export default class WelcomeMenu {
 
     // Initialize images (they should be loaded before rendering)
     this.santaImage = null;
-    this.grinchImage = null;
 
     // Load images
     this.loadImages();
@@ -26,7 +25,7 @@ export default class WelcomeMenu {
     this.btn = new Button({
       text: 'Start a new Challenge',
       x: this.width / 2,
-      y: 750, // Placeholder, will be updated in render()
+      y: 750, // We'll place the button below the text line
       color: '#9AF11C', // Set the button background color to green
       textColor: '#000000'
     });
@@ -39,12 +38,11 @@ export default class WelcomeMenu {
   }
 
   /**
-   * Loads the images for Santa and Grinch.
+   * Loads the images for Santa.
    */
   loadImages() {
     // Assuming that assets.load() has already been called in the main game initialization
-    // and images are available in assets.playerTexture and assets.enemyTexture
-
+    // and images are available in this.assets.welcomeTexture
     this.santaImage = this.assets.welcomeTexture;
   }
 
@@ -83,16 +81,22 @@ export default class WelcomeMenu {
     // Clear the canvas
     canvas.ctx.clearRect(0, 0, this.width, this.height);
 
-    // Draw Santa
-    canvas.ctx.drawImage(
-      this.santaImage,
-      150,
-      200,
-      700,
-      490
-    );
+    // Draw Santa Image (assuming 700x490 from original code)
+    canvas.ctx.drawImage(this.santaImage, 70, 160, 800, 610);
 
-    // Start button
+    // Set font for the text and button
+    canvas.ctx.font = '18px Arial';
+    canvas.ctx.fillStyle = '#9AF11C';
+    canvas.ctx.textAlign = 'center';
+
+    // Draw the green text below the graphic
+    const text = 'Schickt den Grinch nach Hause und genießt das Fest der Liebe mit guter Laune.';
+    const text2 = 'Wir wünschen euch die besten Weihnachten der Welt.';
+    // Position the text roughly 60px below the image (image ends at ~690, so at ~750)
+    canvas.ctx.fillText(text, this.width / 2, 850);
+    canvas.ctx.fillText(text2, this.width / 2, 876);
+
+    // Render the button (it should now also use Arial font and appear below the text)
     this.btn.render();
   }
 }

@@ -3,9 +3,9 @@ import Events from '../../Events.js';
 
 export default class Button {
   constructor({ text = 'Button', x = 50, y = 50, color = '#ba55ad', textColor = '#fff' }) {
-    this.fontSize = 24;
-    this.width = (text.length * this.fontSize) * 0.6;
-    this.height = this.fontSize * 2;
+    this.fontSize = 18;
+    this.width = (text.length * this.fontSize) * 0.7;
+    this.height = this.fontSize * 2.5;
 
     this.text = text;
     this.x = x - this.width / 2; // Center the button horizontally at the given x
@@ -49,14 +49,34 @@ export default class Button {
    * Render the button on the canvas.
    */
   render() {
-    // Draw the button rectangle
-    canvas.ctx.fillStyle = this.color;
-    canvas.ctx.fillRect(this.x, this.y, this.width, this.height);
+    // Set the corner radius
+    const radius = 10;
 
-    // Draw the button text
-    canvas.ctx.font = `${this.fontSize}px VT323`;
+    // Begin path for rounded rectangle
+    canvas.ctx.beginPath();
+    canvas.ctx.moveTo(this.x + radius, this.y);
+    canvas.ctx.lineTo(this.x + this.width - radius, this.y);
+    canvas.ctx.quadraticCurveTo(this.x + this.width, this.y, this.x + this.width, this.y + radius);
+    canvas.ctx.lineTo(this.x + this.width, this.y + this.height - radius);
+    canvas.ctx.quadraticCurveTo(this.x + this.width, this.y + this.height, this.x + this.width - radius, this.y + this.height);
+    canvas.ctx.lineTo(this.x + radius, this.y + this.height);
+    canvas.ctx.quadraticCurveTo(this.x, this.y + this.height, this.x, this.y + this.height - radius);
+    canvas.ctx.lineTo(this.x, this.y + radius);
+    canvas.ctx.quadraticCurveTo(this.x, this.y, this.x + radius, this.y);
+    canvas.ctx.closePath();
+
+    // Fill the rounded rectangle
+    canvas.ctx.fillStyle = this.color;
+    canvas.ctx.fill();
+
+    // Draw the button text in bold Arial
+    canvas.ctx.font = `bold ${this.fontSize}px Arial`;
     canvas.ctx.fillStyle = this.textColor;
     canvas.ctx.textAlign = 'center';
-    canvas.ctx.fillText(this.text, this.x + this.width / 2, this.y + this.fontSize * 1.3);
+    canvas.ctx.fillText(
+      this.text,
+      this.x + this.width / 2,
+      this.y + this.fontSize * 1.6
+    );
   }
 }
