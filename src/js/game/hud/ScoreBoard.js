@@ -45,8 +45,8 @@ export default class ScoreBoard {
   /**
    * Increments the player's score by 1 and updates the display.
    */
-  incrementScore() {
-    this.score++;
+  incrementScore(reward) {
+    this.score += reward;
     this.update();
   }
 

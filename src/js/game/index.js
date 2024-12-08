@@ -1,6 +1,7 @@
 // index.js
 
 import { initCanvas } from './Canvas.js';
+import PhatHelper from './PhatHelper.js'
 import Assets from './Assets.js';
 import Block from './gameObjects/Block.js';
 import Enemy from './gameObjects/Enemy.js';
@@ -40,6 +41,13 @@ export default class Game {
   constructor() {
     const el = '#game';
     this.canvas = initCanvas({ el });
+
+    this.phatHelper = new PhatHelper();
+    this.reward = 100;
+    // for (let i = 1; i <= 100; i++) {
+    //   console.log(`Level ${i}: Reward ${phatHelper.getRewardForNextLevel(i)}`);
+    // }
+    
 
     // Assets
     this.assets = new Assets();
@@ -533,7 +541,7 @@ generateEnemiesAndItems() {
           }
           if (enemy.dead){
             enemy.die();
-            this.scoreBoard.incrementScore();
+            this.scoreBoard.incrementScore(this.reward);
             enemiesHit.push(enemy);
           }
           playerMissilesHit.push(missile);
@@ -664,6 +672,7 @@ generateEnemiesAndItems() {
     this.enemyVelocity += 0.25;
     this.enemyFireRate -= this.enemyFireRate / 6;
     this.msUntilEnemyGoDown -= this.msUntilEnemyGoDown / 9;
+    this.reward += (this.scoreBoard.level < 8) ?  4 : this.phatHelper.getRewardForNextLevel(this.scoreBoard.level);
     console.log("Upgrade");
     console.log("Speed " + this.enemyVelocity);
     console.log("Firerate " + this.enemyFireRate);
