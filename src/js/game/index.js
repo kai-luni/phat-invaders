@@ -662,8 +662,8 @@ generateEnemiesAndItems() {
 
     // Increase difficulty
     this.enemyVelocity += 0.25;
-    this.enemyFireRate -= this.enemyFireRate / 4;
-    this.msUntilEnemyGoDown -= this.msUntilEnemyGoDown / 8;
+    this.enemyFireRate -= this.enemyFireRate / 6;
+    this.msUntilEnemyGoDown -= this.msUntilEnemyGoDown / 9;
     console.log("Upgrade");
     console.log("Speed " + this.enemyVelocity);
     console.log("Firerate " + this.enemyFireRate);
