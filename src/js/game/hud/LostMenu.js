@@ -171,6 +171,7 @@ export default class LostMenu {
       // Prepare the data to be sent
       const data = {
         name: playerName,
+        level: this.level,
         score: this.highScore,
         version: 2
       };
@@ -269,8 +270,9 @@ export default class LostMenu {
     this.hideModal();
   }
 
-  setHighScore(score) {
+  setGameValues(score, level) {
     this.highScore = score;
+    this.level = level;
   }
 
   render() {

@@ -525,6 +525,7 @@ generateEnemiesAndItems() {
     let enemiesHit = [];
     let playerMissilesHit = [];
     let enemyMissilesHit = [];
+    let rowsToKill = [];
 
     // Check collisions between player missiles and enemies
     this.enemies.forEach((enemy) => {
@@ -534,7 +535,7 @@ generateEnemiesAndItems() {
             this.player.shootFast();
           }
           if (enemy.type == 2) {
-            this.destroyRow(enemy.row);
+            rowsToKill.push(enemy.row);            
           }
           if (enemy.type == 3) {
             this.player.shootTripple();
@@ -547,6 +548,11 @@ generateEnemiesAndItems() {
           playerMissilesHit.push(missile);
         }
       });
+    });
+
+    // destroy row from  special item
+    rowsToKill.forEach((row) => {
+      this.destroyRow(row);
     });
 
     // Check collisions between enemy missiles and player
@@ -638,6 +644,15 @@ generateEnemiesAndItems() {
       // Check if the enemy is in the specified row
       if (enemy.row === row) {
         // Call the die method on the enemy
+        this.scoreBoard.incrementScore(this.reward);
+        
+        if (enemy.type == 1) {
+          this.player.shootFast();
+        }
+        if (enemy.type == 3) {
+          this.player.shootTripple();
+        }
+
         enemy.die();
       }
     });
@@ -658,10 +673,7 @@ generateEnemiesAndItems() {
     this.assets.stopMusic();
 
     // Pass the current score to the LostMenu
-    this.lostMenu.setHighScore(this.scoreBoard.score);
-
-    //this.scoreBoard.reset();
-    //this.generateNextLevel();
+    this.lostMenu.setGameValues(this.scoreBoard.score, this.scoreBoard.level);
   }
 
   win() {
