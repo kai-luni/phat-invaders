@@ -97,6 +97,12 @@ export default class Player extends GameObject {
     }
   }
 
+  setFireRate(fireRate) {
+    console.log('set firerate to ', fireRate);
+    this.fireRate = fireRate;
+    this.defaultFireRate = fireRate;
+  }
+
   /**
    * Temporarily enables faster shooting by reducing the fire rate to 100ms for 3 seconds.
    */

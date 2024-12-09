@@ -42,10 +42,12 @@ export default class Game {
     this.canvas = initCanvas({ el });
 
     this.phatHelper = new PhatHelper();
-    this.reward = 100;
+    
     // for (let i = 1; i <= 100; i++) {
     //   console.log(`Level ${i}: Reward ${phatHelper.getRewardForNextLevel(i)}`);
     // }
+
+    this.defaultFireRate = 500;
     
 
     this.assets = new Assets();
@@ -62,6 +64,23 @@ export default class Game {
 
     // Show initial overlay
     this.showInitialOverlay();
+
+    this.reset();
+  }
+
+  /**
+   * this is called when the game starts or restarts
+   */
+  reset() {
+    // reset values that change with level up
+    this.enemyVelocity = 1.0;
+    this.enemyFireRate = 900; // The lower the value, the faster the shooting of enemies
+    this.msUntilEnemyGoDown = 7500;
+
+    console.log('call reset');
+    this.scoreBoard = new ScoreBoard();
+    this.reward = 100;
+    this.playerFireRate = this.defaultFireRate;
   }
 
   showInitialOverlay() {
@@ -197,10 +216,7 @@ export default class Game {
   }
 
   startGame() {
-    // Values that change with level up
-    this.enemyVelocity = 1.0;
-    this.enemyFireRate = 900; // The lower the value, the faster the shooting of enemies
-    this.msUntilEnemyGoDown = 7500;
+    this.reset();
 
     this.generateNextLevel();
     
@@ -244,6 +260,7 @@ export default class Game {
       height: 64,
       texture: this.assets.playerTexture,
       assets: this.assets,
+      fireRate: this.playerFireRate
     });
   }
 
@@ -656,6 +673,8 @@ generateEnemiesAndItems() {
     this.scoreBoard.levelup();
 
     this.assets.setMusicSpeed(1.0 + (this.scoreBoard.level*0.05));
+    this.playerFireRate = this.playerFireRate - this.playerFireRate/20;
+    this.player.setFireRate(this.playerFireRate)
 
     // Increase difficulty
     this.enemyVelocity += 0.25;
