@@ -77,7 +77,7 @@ export default class Game {
     this.enemyFireRate = 900; // The lower the value, the faster the shooting of enemies
     this.msUntilEnemyGoDown = 7500;
 
-    console.log('call reset');
+    this.assets.setMusicSpeed(1.0);
     this.scoreBoard = new ScoreBoard();
     this.reward = 100;
     this.playerFireRate = this.defaultFireRate;
