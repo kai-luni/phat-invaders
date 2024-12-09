@@ -230,8 +230,25 @@ export default class Assets {
     source.start(0);
   }
 
+  /**
+   * Set the playback speed for the currently playing music.
+   * @param {number} speed - The desired playback speed (default is 1.0 for normal speed).
+   */
+  setMusicSpeed(speed) {
+    // Ensure the speed is a positive number
+    if (speed <= 0) {
+      speed = 0;
+    }
+
+    if (this.currentMusic) {
+      this.currentMusic.playbackRate = speed;
+      console.log(`Music speed set to ${speed}`);
+    } else {
+      console.warn('No music is currently playing to adjust speed.');
+    }
+  }
+
   setVolume(value) {
-    console.log('set volume', value);
     // Ensure the volume is within the valid range
     this.globalVolume = Math.max(0.0, Math.min(1.0, value));
 

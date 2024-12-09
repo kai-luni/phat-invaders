@@ -655,6 +655,8 @@ generateEnemiesAndItems() {
     // Removed level-up and incrementing of enemies
     this.scoreBoard.levelup();
 
+    this.assets.setMusicSpeed(1.0 + (this.scoreBoard.level*0.05));
+
     // Increase difficulty
     this.enemyVelocity += 0.25;
     this.enemyFireRate -= this.enemyFireRate / 6;
