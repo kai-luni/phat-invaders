@@ -10,6 +10,8 @@ import santaRocketTexture from '../../assets/graphics/kugel_rot.png';
 import presentTexture from '../../assets/graphics/geschenk.png';
 import blockTexture from '../../assets/graphics/kugel_gruen.png';
 import playerTexture from '../../assets/graphics/santa.png';
+import soundOffTexture from '../../assets/graphics/sound_off.png';
+import soundOnTexture from '../../assets/graphics/sound_on.png';
 import welcomeTexture from '../../assets/graphics/welcome.png';
 
 // New additions
@@ -46,6 +48,10 @@ export default class Assets {
     this.presentTexture.src = presentTexture;
     this.santaRocketTexture = new Image();
     this.santaRocketTexture.src = santaRocketTexture;
+    this.soundOnTexture = new Image();
+    this.soundOnTexture.src = soundOnTexture;
+    this.soundOffTexture = new Image();
+    this.soundOffTexture.src = soundOffTexture;
     this.welcomeTexture = new Image();
     this.welcomeTexture.src = welcomeTexture;
 
@@ -74,7 +80,7 @@ export default class Assets {
     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
     // Global volume and speed control (0.0 to 1.0)
-    this.globalVolume = 0.6; // Default volume
+    this.globalVolume = 0.14; // Default volume
     this.backgroundMusicSpeed = 1.0;
 
     // Initialize all music tracks
@@ -235,7 +241,7 @@ export default class Assets {
   }
 
   // Helper method to play sound effects using Web Audio API
-  playSoundEffect(key, volume = 1.0) {
+  playSoundEffect(key, volume = 0.14) {
     if (!this.buffers[key]) {
       console.error(`Sound effect buffer not loaded: ${key}`);
       return;
