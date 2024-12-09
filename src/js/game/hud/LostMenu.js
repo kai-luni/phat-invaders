@@ -225,7 +225,6 @@ export default class LostMenu {
 
   // Event handler for the try again button click (emit 'start')
   onTryAgainClick() {
-    console.log('Try Again button clicked');
     this.events.emit('start');
   }
 

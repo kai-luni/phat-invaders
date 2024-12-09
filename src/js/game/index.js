@@ -6,7 +6,6 @@ import Assets from './Assets.js';
 import Block from './gameObjects/Block.js';
 import Enemy from './gameObjects/Enemy.js';
 import Player from './gameObjects/Player.js';
-import PauseMenu from './hud/PauseMenu.js';
 import WelcomeMenu from './hud/WelcomeMenu.js';
 import LostMenu from './hud/LostMenu.js';
 import HighScoreMenu from './hud/HighScoreMenu.js';
@@ -49,14 +48,13 @@ export default class Game {
     // }
     
 
-    // Assets
     this.assets = new Assets();
+    this.scoreBoard = new ScoreBoard();
 
     // Game state
     this.gameState = STATE.LOADING;
     // Initialize event handlers
     this.onStart = this.onStart.bind(this);
-    this.onResume = this.onResume.bind(this);
     this.onHighscore = this.onHighscore.bind(this);
 
     // Initialize last frame time for deltaTime calculation
@@ -147,11 +145,6 @@ export default class Game {
 
       if (this.gameState !== STATE.PLAYING && this.gameState !== STATE.BOSS) return;
 
-      // Handle pause key
-      if (e.keyCode === KEYBOARD.PAUSE && this.gameState === STATE.PAUSED) {
-        this.resume();
-      }
-
       // Handle fire key with rate limiting
       if (e.keyCode === KEYBOARD.FIRE) {
         this.player.fire();
@@ -159,16 +152,19 @@ export default class Game {
     });
 
     // Menu event listeners
-    this.welcomeMenu = new WelcomeMenu(this.canvas.width, this.canvas.height);
-    this.welcomeMenu.events.on('start', this.onStart);
     this.highScoreMenu = new HighScoreMenu();
     this.highScoreMenu.events.on('start', this.onStart);
     this.lostMenu = new LostMenu();
     this.lostMenu.events.on('start', this.onStart);
     this.lostMenu.events.on('highscore', this.onHighscore);
-
-    this.pauseMenu = new PauseMenu();
-    this.pauseMenu.events.on('resume', this.onResume);
+    this.scoreBoard.events.on('soundOn', () => {
+      this.assets.setVolume(0.6);
+    });
+    this.scoreBoard.events.on('soundOff', () => {
+      this.assets.setVolume(0.0);
+    });    
+    this.welcomeMenu = new WelcomeMenu(this.canvas.width, this.canvas.height);
+    this.welcomeMenu.events.on('start', this.onStart);
   }
 
   onStart() {
@@ -205,17 +201,9 @@ export default class Game {
     this.enemyVelocity = 1.0;
     this.enemyFireRate = 900; // The lower the value, the faster the shooting of enemies
     this.msUntilEnemyGoDown = 7500;
-    
-    this.scoreBoard = new ScoreBoard();
 
     this.generateNextLevel();
     
-  }
-
-  onResume() {
-    if (this.gameState === STATE.PAUSED) {
-      this.resume();
-    }
   }
 
   changeGameState(newState) {
@@ -226,9 +214,6 @@ export default class Game {
         break;
       case STATE.LOST:
         this.lostMenu.unbind();
-        break;
-      case STATE.PAUSED:
-        this.pauseMenu.unbind();
         break;
       case STATE.HIGHSCORE:
         this.highScoreMenu.unbind();
@@ -245,9 +230,6 @@ export default class Game {
         break;
       case STATE.LOST:
         this.lostMenu.bind();
-        break;
-      case STATE.PAUSED:
-        this.pauseMenu.bind();
         break;
       case STATE.HIGHSCORE:
           this.highScoreMenu.bind();
@@ -392,9 +374,6 @@ generateEnemiesAndItems() {
         break;
       case STATE.WELCOME:
         this.welcomeMenu.render();
-        break;
-      case STATE.PAUSED:
-        this.pauseMenu.render();
         break;
       case STATE.PLAYING:
         this.scoreBoard.render();
@@ -661,10 +640,6 @@ generateEnemiesAndItems() {
     this.enemies = this.enemies.filter((enemy) => enemy.row !== row || !enemy.dead);
   }
 
-  resume() {
-  }
-
-
   loose() {
     this.changeGameState(STATE.LOST);
     this.assets.playLaughingSound();
@@ -692,8 +667,5 @@ generateEnemiesAndItems() {
 
     // Reset the game state
     this.generateNextLevel();
-
-    // Resume the game
-    this.resume();
   }
 }

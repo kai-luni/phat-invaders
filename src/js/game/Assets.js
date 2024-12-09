@@ -231,6 +231,7 @@ export default class Assets {
   }
 
   setVolume(value) {
+    console.log('set volume', value);
     // Ensure the volume is within the valid range
     this.globalVolume = Math.max(0.0, Math.min(1.0, value));
 
