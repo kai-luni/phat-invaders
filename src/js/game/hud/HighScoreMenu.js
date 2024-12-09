@@ -2,7 +2,8 @@
 import Events from '../Events.js';
 
 export default class HighScoreMenu {
-  constructor() {
+  constructor(assets) {
+    this.assets = assets;
     this.events = new Events();
 
     // Create the modal elements
@@ -10,34 +11,34 @@ export default class HighScoreMenu {
   }
 
   createModal() {
-  // Create the modal overlay
-  this.modalOverlay = document.createElement('div');
-  this.modalOverlay.style.position = 'fixed';
-  this.modalOverlay.style.top = '0';
-  this.modalOverlay.style.left = '0';
-  this.modalOverlay.style.width = '100%';
-  this.modalOverlay.style.height = '100%';
-  // Change the alpha value from 0.8 to 0.3 for a more translucent background
-  this.modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
-  this.modalOverlay.style.display = 'none'; // Hidden by default
-  this.modalOverlay.style.zIndex = '1000'; // Ensure it appears above other elements
+    // Create the modal overlay
+    this.modalOverlay = document.createElement('div');
+    this.modalOverlay.style.position = 'fixed';
+    this.modalOverlay.style.top = '0';
+    this.modalOverlay.style.left = '0';
+    this.modalOverlay.style.width = '100%';
+    this.modalOverlay.style.height = '100%';
+    // Change the alpha value from 0.8 to 0.3 for a more translucent background
+    this.modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+    this.modalOverlay.style.display = 'none'; // Hidden by default
+    this.modalOverlay.style.zIndex = '1000'; // Ensure it appears above other elements
 
-  // Create the modal content container
-  this.modalContent = document.createElement('div');
-  this.modalContent.style.position = 'absolute';
-  this.modalContent.style.top = '50%';
-  this.modalContent.style.left = '50%';
-  this.modalContent.style.transform = 'translate(-50%, -50%)';
-  this.modalContent.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'; // Translucent background for the content
-  this.modalContent.style.padding = '20px';
-  this.modalContent.style.borderRadius = '5px';
-  this.modalContent.style.textAlign = 'center';
-  this.modalContent.style.width = '400px';
+    // Create the modal content container
+    this.modalContent = document.createElement('div');
+    this.modalContent.style.position = 'absolute';
+    this.modalContent.style.top = '50%';
+    this.modalContent.style.left = '50%';
+    this.modalContent.style.transform = 'translate(-50%, -50%)';
+    this.modalContent.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'; // Translucent background for the content
+    this.modalContent.style.padding = '20px';
+    this.modalContent.style.borderRadius = '5px';
+    this.modalContent.style.textAlign = 'center';
+    this.modalContent.style.width = '400px';
 
-    // Create the heading
-    const heading = document.createElement('h2');
-    heading.textContent = 'High Scores';
-    heading.style.color = '#9AF11C'; // Set font color
+    // Use the assets class for the High Scores image
+    const highScoresImage = this.assets.highscoreTextTexture;
+    highScoresImage.style.width = '100%'; // Adjust width as needed
+    highScoresImage.style.marginBottom = '20px'; // Add spacing below the image
 
     // Create the high score list container
     this.scoreListContainer = document.createElement('div');
@@ -62,7 +63,7 @@ export default class HighScoreMenu {
     this.backButton.style.cursor = 'pointer';
 
     // Append elements to modal content
-    this.modalContent.appendChild(heading);
+    this.modalContent.appendChild(highScoresImage);
     this.modalContent.appendChild(this.loadingIndicator);
     this.modalContent.appendChild(this.scoreListContainer);
     this.modalContent.appendChild(this.backButton);
@@ -84,8 +85,6 @@ export default class HighScoreMenu {
       );
       if (response.ok) {
         const highScores = (await response.json()).highScores;
-        // console.log('>>>>>>API Response:', highScores);
-        // console.log('>>>>>>API Response 2:', highScores.highScores);
         this.displayHighScores(highScores);
       } else {
         this.loadingIndicator.textContent = 'Failed to load high scores.';
@@ -122,7 +121,6 @@ export default class HighScoreMenu {
     nameHeader.style.padding = '5px';
     nameHeader.style.color = '#9AF11C';
 
-    // Assuming the high score entries have a 'score' field
     const scoreHeader = document.createElement('th');
     scoreHeader.textContent = 'Score';
     scoreHeader.style.borderBottom = '1px solid #9AF11C';
@@ -192,19 +190,14 @@ export default class HighScoreMenu {
     this.modalOverlay.style.display = 'none';
   }
 
-  // Bind event listeners when the menu is active
   bind() {
-    // Show the modal when the HighScoreMenu is bound
     this.showModal();
   }
 
-  // Unbind event listeners when the menu is inactive
   unbind() {
-    // Hide the modal when the HighScoreMenu is unbound
     this.hideModal();
   }
 
-  // Clean up the modal when no longer needed
   destroy() {
     this.modalOverlay.remove();
   }

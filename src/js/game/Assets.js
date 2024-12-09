@@ -12,6 +12,11 @@ import blockTexture from '../../assets/graphics/kugel_gruen.png';
 import playerTexture from '../../assets/graphics/santa.png';
 import welcomeTexture from '../../assets/graphics/welcome.png';
 
+// New additions
+import highscoreTextTexture from '../../assets/graphics/scoreboard_text.png';
+import gameOverTexture from '../../assets/graphics/game_over_text.png';
+import headlineTexture from '../../assets/graphics/headline.png';
+
 // Sounds
 import bossMusic from '../../assets/audio/boss_music.mp3';
 import boostSound from '../../assets/audio/boost.mp3';
@@ -43,6 +48,16 @@ export default class Assets {
     this.santaRocketTexture.src = santaRocketTexture;
     this.welcomeTexture = new Image();
     this.welcomeTexture.src = welcomeTexture;
+
+    // New textures
+    this.highscoreTextTexture = new Image();
+    this.highscoreTextTexture.src = highscoreTextTexture;
+
+    this.gameOverTextTexture = new Image();
+    this.gameOverTextTexture.src = gameOverTexture;
+
+    this.headlineTexture = new Image();
+    this.headlineTexture.src = headlineTexture;
 
     // Paths for audio files
     this.audioFiles = {
@@ -93,6 +108,10 @@ export default class Assets {
         this.loadTexture(this.presentTexture),
         this.loadTexture(this.santaRocketTexture),
         this.loadTexture(this.welcomeTexture),
+        // New textures
+        this.loadTexture(this.highscoreTextTexture),
+        this.loadTexture(this.gameOverTextTexture),
+        this.loadTexture(this.headlineTexture),
       ];
 
       // Wait for all assets to load

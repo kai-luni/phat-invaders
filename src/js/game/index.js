@@ -171,9 +171,9 @@ export default class Game {
     });
 
     // Menu event listeners
-    this.highScoreMenu = new HighScoreMenu();
+    this.highScoreMenu = new HighScoreMenu(this.assets);
     this.highScoreMenu.events.on('start', this.onStart);
-    this.lostMenu = new LostMenu();
+    this.lostMenu = new LostMenu(this.assets);
     this.lostMenu.events.on('start', this.onStart);
     this.lostMenu.events.on('highscore', this.onHighscore);
     this.scoreBoard.events.on('soundOn', () => {

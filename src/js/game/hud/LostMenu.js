@@ -2,7 +2,8 @@
 import Events from '../Events.js';
 
 export default class LostMenu {
-  constructor() {
+  constructor(assets) {
+    this.assets = assets;
     this.events = new Events();
     this.highScore = 0; // Initialize with 0 as default
 
@@ -34,10 +35,10 @@ export default class LostMenu {
     this.modalContent.style.textAlign = 'center';
     this.modalContent.style.width = '400px';
 
-    // Create the form elements
-    const heading = document.createElement('h2');
-    heading.textContent = 'Game Over';
-    heading.style.color = '#9AF11C'; // Set font color
+    // Use the assets class for the Game Over image
+    const gameOverImage = this.assets.gameOverTextTexture;
+    gameOverImage.style.width = '100%'; // Adjust as needed
+    gameOverImage.style.marginBottom = '20px';
 
     // Instructions text
     const instructions = document.createElement('p');
@@ -127,7 +128,7 @@ export default class LostMenu {
     this.messageDisplay.style.color = '#9AF11C'; // Set font color
 
     // Append elements to modal content
-    this.modalContent.appendChild(heading);
+    this.modalContent.appendChild(gameOverImage);
     this.modalContent.appendChild(instructions);
     this.modalContent.appendChild(warning);
     this.modalContent.appendChild(nameLabel);
@@ -147,10 +148,8 @@ export default class LostMenu {
 
     // Bind the submit button click event
     this.modalSubmitButton.addEventListener('click', this.onModalSubmit.bind(this));
-
-    // Bind the try again button click event (emit 'start')
     this.tryAgainButton.addEventListener('click', this.onTryAgainClick.bind(this));
-  }
+  }  
 
   // Event handler for the modal submit button click
   async onModalSubmit() {
