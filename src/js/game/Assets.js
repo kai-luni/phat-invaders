@@ -58,8 +58,9 @@ export default class Assets {
     // Create an AudioContext for sound effects
     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-    // Global volume control (0.0 to 1.0)
+    // Global volume and speed control (0.0 to 1.0)
     this.globalVolume = 0.6; // Default volume
+    this.backgroundMusicSpeed = 1.0;
 
     // Initialize all music tracks
     this.backgroundMusic = new Audio(gameMusic);
@@ -178,6 +179,7 @@ export default class Assets {
 
     // Set this track as the currently playing music
     this.currentMusic = chosenMusic;
+    this.currentMusic.playbackRate = this.backgroundMusicSpeed;
   }
 
   // Stop any currently playing music
@@ -239,12 +241,10 @@ export default class Assets {
     if (speed <= 0) {
       speed = 0;
     }
+    this.backgroundMusicSpeed = speed;
 
     if (this.currentMusic) {
       this.currentMusic.playbackRate = speed;
-      console.log(`Music speed set to ${speed}`);
-    } else {
-      console.warn('No music is currently playing to adjust speed.');
     }
   }
 
