@@ -175,10 +175,10 @@ export default class Game {
     this.lostMenu.events.on('start', this.onStart);
     this.lostMenu.events.on('highscore', this.onHighscore);
     this.scoreBoard.events.on('soundOn', () => {
-      this.assets.setVolume(0.6);
+      this.assets.soundOn();
     });
     this.scoreBoard.events.on('soundOff', () => {
-      this.assets.setVolume(0.0);
+      this.assets.soundOff();
     });    
     this.welcomeMenu = new WelcomeMenu(this.canvas.width, this.canvas.height);
     this.welcomeMenu.events.on('start', this.onStart);

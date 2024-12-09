@@ -225,19 +225,19 @@ export default class Assets {
 
   // Sound effects
   playBoostSound() {
-    this.playSoundEffect('boost', 1.0);
+    this.playSoundEffect('boost', 0.6);
   }
 
   playFireSound() {
-    this.playSoundEffect('fire', 1.0);
+    this.playSoundEffect('fire', 0.6);
   }
 
   playKillSound() {
-    this.playSoundEffect('kill', 1.0);
+    this.playSoundEffect('kill', 0.6);
   }
 
   playLaughingSound() {
-    this.playSoundEffect('laughing', 1.0);
+    this.playSoundEffect('laughing', 0.6);
   }
 
   // Helper method to play sound effects using Web Audio API
@@ -283,5 +283,23 @@ export default class Assets {
 
   getVolume() {
     return this.globalVolume;
+  }
+
+  /**
+   * Turns the sound on by setting the global volume to the previous value.
+   */
+  soundOn() {
+    this.soundEnabled = true;
+    this.setVolume(0.14); // Restore to the default global volume
+    console.log('Sound is turned ON');
+  }
+
+  /**
+   * Turns the sound off by setting the global volume to zero.
+   */
+  soundOff() {
+    this.soundEnabled = false;
+    this.setVolume(0.0); // Mute the global volume
+    console.log('Sound is turned OFF');
   }
 }
