@@ -9,26 +9,20 @@ import Events from '../Events.js';
  */
 export default class ScoreBoard {
   /**
-   * Initializes the ScoreBoard with default values and positions for the score, level, and sound button.
+   * Initializes the ScoreBoard with references to assets and default values.
+   * @param {Object} assets - The assets object containing textures and sounds.
    */
-  constructor() {
+  constructor(assets) {
+    this.assets = assets;
     this.fontSize = 16; // Font size for the text
     this.score = 0; // Initial score
     this.level = 1; // Initial level
     this.soundOn = true; // Initial sound state
 
     // Text objects for displaying score and level
-    this.scoreText = new Text({
-      x: this.fontSize,
-      y: this.fontSize,
-      align: 'left',
-    });
-
-    this.levelText = new Text({
-      x: this.fontSize,
-      y: this.fontSize * 2.5,
-      align: 'left',
-    });
+    // We'll position them dynamically in the render() method.
+    this.scoreText = new Text({ align: 'right' });
+    this.levelText = new Text({ align: 'left' });
 
     // Position and size for the sound toggle button
     this.soundButton = {
@@ -75,15 +69,7 @@ export default class ScoreBoard {
   }
 
   /**
-   * Emits an event with the given name.
-   * @param {string} eventName - The name of the event to emit.
-   */
-  emit(eventName) {
-    console.log(`Event emitted: ${eventName}`);
-  }
-
-  /**
-   * Scales mouse coordinates from screen space to canvas logical space.
+   * Returns mouse coordinates relative to the canvas.
    */
   getMousePosition(event) {
     const rect = canvas.el.getBoundingClientRect();
@@ -132,16 +118,35 @@ export default class ScoreBoard {
 
   /**
    * Renders the ScoreBoard on the canvas.
+   * Displays the headline image, the score & level in the middle, and the sound button on the right.
    */
   render() {
     // Draw the overlay at the top of the canvas
     canvas.ctx.fillStyle = '#000000dd';
-    canvas.ctx.fillRect(0, 0, canvas.width, this.fontSize * 3);
+    // Make the top overlay a bit taller to accommodate image and text
+    const overlayHeight = this.fontSize * 3;
+    canvas.ctx.fillRect(0, 0, canvas.width, overlayHeight);
 
-    // Render the score text
+    // Draw the headline image in the upper-left corner with specific dimensions
+    const headlineWidth = 297; // Width of the headline texture
+    const headlineHeight = 62; // Height of the headline texture
+    canvas.ctx.drawImage(this.assets.headlineTexture, 10, 5, headlineWidth, headlineHeight);
+
+    // Render score and level in the middle of the top edge
+    // Let's place them in a line:
+    // Score on the left side of center, Level on the right side of center
+    const centerX = canvas.width / 2;
+    const textY = this.fontSize * 1.8;
+
+    // Score aligned right, placed slightly left of center
+    this.scoreText.x = centerX - 20;
+    this.scoreText.y = textY;
+    // Level aligned left, placed slightly right of center
+    this.levelText.x = centerX + 20;
+    this.levelText.y = textY;
+
+    // Render the score and level text
     this.scoreText.render();
-
-    // Render the level text
     this.levelText.render();
 
     // Render the sound button

@@ -48,10 +48,8 @@ export default class Game {
     // }
 
     this.defaultFireRate = 500;
-    
 
     this.assets = new Assets();
-    this.scoreBoard = new ScoreBoard();
 
     // Game state
     this.gameState = STATE.LOADING;
@@ -78,7 +76,7 @@ export default class Game {
     this.msUntilEnemyGoDown = 7500;
 
     this.assets.setMusicSpeed(1.0);
-    this.scoreBoard = new ScoreBoard();
+    this.scoreBoard = new ScoreBoard(this.assets);
     this.reward = 100;
     this.playerFireRate = this.defaultFireRate;
   }
@@ -679,7 +677,7 @@ generateEnemiesAndItems() {
     // Increase difficulty
     this.enemyVelocity += 0.25;
     this.enemyFireRate -= this.enemyFireRate / 6;
-    this.msUntilEnemyGoDown -= this.msUntilEnemyGoDown / 9;
+    this.msUntilEnemyGoDown -= this.msUntilEnemyGoDown / 14;
     this.reward += (this.scoreBoard.level < 8) ?  4 : this.phatHelper.getRewardForNextLevel(this.scoreBoard.level);
     console.log("Upgrade");
     console.log("Speed " + this.enemyVelocity);

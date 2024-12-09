@@ -7,7 +7,7 @@ export default class Text {
     this.y = y
     this.color = color
     this.align = align
-    this.size = 16
+    this.size = 24
   }
 
   updateText(newText) {
