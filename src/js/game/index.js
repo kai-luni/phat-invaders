@@ -92,7 +92,7 @@ export default class Game {
     this.initialOverlay.style.left = '0';
     this.initialOverlay.style.width = '100%';
     this.initialOverlay.style.height = '100%';
-    this.initialOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    this.initialOverlay.style.backgroundColor = 'rgba(0, 0, 0, 1)';
     this.initialOverlay.style.display = 'flex';
     this.initialOverlay.style.flexDirection = 'column';
     this.initialOverlay.style.justifyContent = 'center';
@@ -100,7 +100,7 @@ export default class Game {
     this.initialOverlay.style.zIndex = '1000';
   
     this.overlayText = document.createElement('div');
-    this.overlayText.style.fontSize = '24px';
+    this.overlayText.style.fontSize = '20px';
     this.overlayText.style.color = '#ffffff';
     this.overlayText.style.textAlign = 'center'; // Center text inside the element
     this.overlayText.style.margin = '0'; // Remove default margins
