@@ -6,6 +6,7 @@ export default class LostMenu {
     this.assets = assets;
     this.events = new Events();
     this.highScore = 0; // Initialize with 0 as default
+    this.level = 0;     // Initialize level as well if needed
 
     // Create the modal elements
     this.createModal();
@@ -37,31 +38,33 @@ export default class LostMenu {
 
     // Use the assets class for the Game Over image
     const gameOverImage = this.assets.gameOverTextTexture;
-    gameOverImage.style.width = '100%'; // Adjust as needed
+    gameOverImage.style.width = '100%';
     gameOverImage.style.marginBottom = '20px';
 
-    // Instructions text
-    const instructions = document.createElement('p');
-    instructions.textContent =
+    // Define instructions as a class property
+    this.instructions = document.createElement('p');
+    this.instructions.textContent =
       'Would you like to see your amazing success in the scoreboard? Then enter your gamer name and email address here.';
-    instructions.style.color = '#9AF11C'; // Set font color
-    instructions.style.marginTop = '10px';
-    instructions.style.fontSize = '14px'; // Smaller text
+    this.instructions.style.color = '#9AF11C';
+    this.instructions.style.marginTop = '10px';
+    this.instructions.style.fontSize = '14px';
 
-    // Warning text
-    const warning = document.createElement('p');
-    warning.textContent =
+    // Define warning as a class property
+    this.warning = document.createElement('p');
+    this.warning.textContent =
       'If you leave this page without submitting your gamer name and email address, your score will be lost.';
-    warning.style.color = '#9AF11C'; // Set font color
-    warning.style.marginTop = '10px';
-    warning.style.fontSize = '12px'; // Even smaller text
+    this.warning.style.color = '#9AF11C';
+    this.warning.style.marginTop = '10px';
+    this.warning.style.fontSize = '12px';
 
-    const nameLabel = document.createElement('label');
-    nameLabel.textContent = 'Gamer Name';
-    nameLabel.style.display = 'block';
-    nameLabel.style.marginTop = '20px';
-    nameLabel.style.color = '#9AF11C'; // Set font color
+    // Define nameLabel as a class property
+    this.nameLabel = document.createElement('label');
+    this.nameLabel.textContent = 'Gamer Name';
+    this.nameLabel.style.display = 'block';
+    this.nameLabel.style.marginTop = '20px';
+    this.nameLabel.style.color = '#9AF11C';
 
+    // Define nameInput
     this.nameInput = document.createElement('input');
     this.nameInput.type = 'text';
     this.nameInput.placeholder = 'Enter your gamer name';
@@ -73,21 +76,23 @@ export default class LostMenu {
     this.nameInput.style.border = `1px solid #9AF11C`; // Outline color
     this.nameInput.style.borderRadius = '5px';
 
-    const emailLabel = document.createElement('label');
-    emailLabel.textContent = 'Email Address';
-    emailLabel.style.display = 'block';
-    emailLabel.style.marginTop = '10px';
-    emailLabel.style.color = '#9AF11C'; // Set font color
+    // Define emailLabel as a class property
+    this.emailLabel = document.createElement('label');
+    this.emailLabel.textContent = 'Email Address';
+    this.emailLabel.style.display = 'block';
+    this.emailLabel.style.marginTop = '10px';
+    this.emailLabel.style.color = '#9AF11C';
 
+    // Define emailInput
     this.emailInput = document.createElement('input');
     this.emailInput.type = 'email';
     this.emailInput.placeholder = 'Enter your email address';
     this.emailInput.style.width = '100%';
     this.emailInput.style.padding = '8px';
     this.emailInput.style.marginTop = '5px';
-    this.emailInput.style.backgroundColor = '#000000'; // Black background
-    this.emailInput.style.color = '#9AF11C'; // Font color
-    this.emailInput.style.border = `1px solid #9AF11C`; // Outline color
+    this.emailInput.style.backgroundColor = '#000000';
+    this.emailInput.style.color = '#9AF11C';
+    this.emailInput.style.border = `1px solid #9AF11C`;
     this.emailInput.style.borderRadius = '5px';
 
     // Submit button
@@ -98,47 +103,48 @@ export default class LostMenu {
     this.modalSubmitButton.style.marginTop = '20px';
     this.modalSubmitButton.style.backgroundColor = '#9AF11C'; // Green background
     this.modalSubmitButton.style.color = 'black'; // Text color black
-    this.modalSubmitButton.style.border = 'none'; // Remove border
+    this.modalSubmitButton.style.border = 'none';
     this.modalSubmitButton.style.borderRadius = '5px';
     this.modalSubmitButton.style.fontSize = '16px';
     this.modalSubmitButton.style.cursor = 'pointer';
 
+    // Try Again button
     this.tryAgainButton = document.createElement('button');
     this.tryAgainButton.textContent = 'Try again';
     this.tryAgainButton.style.width = '100%';
     this.tryAgainButton.style.padding = '10px';
     this.tryAgainButton.style.marginTop = '10px';
-    this.tryAgainButton.style.backgroundColor = '#9AF11C'; // Green background
-    this.tryAgainButton.style.color = 'black'; // Text color black
-    this.tryAgainButton.style.border = 'none'; // Remove border
+    this.tryAgainButton.style.backgroundColor = '#9AF11C';
+    this.tryAgainButton.style.color = 'black';
+    this.tryAgainButton.style.border = 'none';
     this.tryAgainButton.style.borderRadius = '5px';
     this.tryAgainButton.style.fontSize = '16px';
     this.tryAgainButton.style.cursor = 'pointer';
 
-    // Data usage note
-    const dataUsageNote = document.createElement('p');
-    dataUsageNote.textContent = '*Your data will be used exclusively for this game.';
-    dataUsageNote.style.color = '#9AF11C';
-    dataUsageNote.style.fontSize = '12px';
-    dataUsageNote.style.marginTop = '10px';
-
     // Message display
     this.messageDisplay = document.createElement('p');
     this.messageDisplay.style.marginTop = '20px';
-    this.messageDisplay.style.color = '#9AF11C'; // Set font color
+    this.messageDisplay.style.color = '#9AF11C';
+
+    // New German text block (smaller and green)
+    this.germanInfo = document.createElement('p');
+    this.germanInfo.innerHTML = `Der/die GewinnerIn erhält eine kleine Überraschung. Die Gewinnbenachrichtigung erfolgt per Mail. Ihre personenbezogenen Daten verwenden wir aufgrund Art. 6 Abs. 1 lit. b) DS-GVO nur zur Durchführung des Gewinnspiels und geben sie nicht an Dritte weiter. <a href="https://www.phatconsulting.de/impressum-datenschutz/" target="_blank" style="color:#9AF11C;">Anbieterkennzeichnung und mehr Datenschutzinformationen</a>`;
+    this.germanInfo.style.color = '#9AF11C';
+    this.germanInfo.style.fontSize = '12px';
+    this.germanInfo.style.marginTop = '10px';
 
     // Append elements to modal content
     this.modalContent.appendChild(gameOverImage);
-    this.modalContent.appendChild(instructions);
-    this.modalContent.appendChild(warning);
-    this.modalContent.appendChild(nameLabel);
+    this.modalContent.appendChild(this.instructions);
+    this.modalContent.appendChild(this.warning);
+    this.modalContent.appendChild(this.nameLabel);
     this.modalContent.appendChild(this.nameInput);
-    this.modalContent.appendChild(emailLabel);
+    this.modalContent.appendChild(this.emailLabel);
     this.modalContent.appendChild(this.emailInput);
     this.modalContent.appendChild(this.modalSubmitButton);
     this.modalContent.appendChild(this.tryAgainButton);
-    this.modalContent.appendChild(dataUsageNote);
     this.modalContent.appendChild(this.messageDisplay);
+    this.modalContent.appendChild(this.germanInfo);
 
     // Append modal content to overlay
     this.modalOverlay.appendChild(this.modalContent);
@@ -146,12 +152,11 @@ export default class LostMenu {
     // Append modal overlay to body
     document.body.appendChild(this.modalOverlay);
 
-    // Bind the submit button click event
+    // Bind event listeners
     this.modalSubmitButton.addEventListener('click', this.onModalSubmit.bind(this));
     this.tryAgainButton.addEventListener('click', this.onTryAgainClick.bind(this));
-  }  
+  }
 
-  // Event handler for the modal submit button click
   async onModalSubmit() {
     const playerName = this.nameInput.value.trim() || 'Anonymous';
     let email = this.emailInput.value.trim();
@@ -161,13 +166,11 @@ export default class LostMenu {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         this.messageDisplay.textContent = 'Invalid email address format.';
-        // Keep font color consistent
         return;
       }
     }
 
     try {
-      // Prepare the data to be sent
       const data = {
         name: playerName,
         level: this.level,
@@ -175,12 +178,10 @@ export default class LostMenu {
         version: 2
       };
 
-      // Include the email if provided
       if (email !== '') {
         data.email = email;
       }
 
-      // POST the high score to the API
       const response = await fetch(
         'https://si-game-highscores-func.azurewebsites.net/api/SaveHighScore',
         {
@@ -198,7 +199,7 @@ export default class LostMenu {
         this.modalSubmitButton.disabled = true;
         this.tryAgainButton.disabled = true;
 
-        // Change cursor style to not-allowed
+        // Change cursor style
         this.nameInput.style.cursor = 'not-allowed';
         this.emailInput.style.cursor = 'not-allowed';
         this.modalSubmitButton.style.cursor = 'not-allowed';
@@ -211,7 +212,7 @@ export default class LostMenu {
         this.modalSubmitButton.style.opacity = disabledOpacity;
         this.tryAgainButton.style.opacity = disabledOpacity;
 
-        // Emit 'highscore' event after successful submission
+        // Emit 'highscore' event
         this.events.emit('highscore');
       } else {
         this.messageDisplay.textContent = 'Failed to submit high score. Try again!';
@@ -222,7 +223,6 @@ export default class LostMenu {
     }
   }
 
-  // Event handler for the try again button click (emit 'start')
   onTryAgainClick() {
     this.events.emit('start');
   }
@@ -249,22 +249,51 @@ export default class LostMenu {
     this.modalSubmitButton.style.opacity = '1';
     this.tryAgainButton.style.opacity = '1';
 
+    if (this.canSubmitHighscore()) {
+      // Score is higher than 5000, show all elements
+      this.instructions.style.display = 'block';
+      this.warning.style.display = 'block';
+      this.nameLabel.style.display = 'block';
+      this.nameInput.style.display = 'block';
+      this.emailLabel.style.display = 'block';
+      this.emailInput.style.display = 'block';
+      this.modalSubmitButton.style.display = 'block';
+      this.messageDisplay.style.display = 'block';
+      this.germanInfo.style.display = 'block';
+    } else {
+      // Score is 5000 or less, only show the gameOverImage and tryAgainButton
+      this.instructions.style.display = 'none';
+      this.warning.style.display = 'none';
+      this.nameLabel.style.display = 'none';
+      this.nameInput.style.display = 'none';
+      this.emailLabel.style.display = 'none';
+      this.emailInput.style.display = 'none';
+      this.modalSubmitButton.style.display = 'none';
+      this.messageDisplay.style.display = 'none';
+      this.germanInfo.style.display = 'block'; // The user didn't say to remove this, but previously said only show image and button.
+      // According to the previous instructions, we only show the game over graphic and try again button.
+      // So let's hide germanInfo as well if the score is too low.
+      this.germanInfo.style.display = 'none';
+    }
+
+    this.tryAgainButton.style.display = 'block';
+
     this.modalOverlay.style.display = 'block';
+  }
+
+  canSubmitHighscore() {
+    return this.highScore > 5000;
   }
 
   hideModal() {
     this.modalOverlay.style.display = 'none';
   }
 
-  // Bind event listeners when the menu is active
   bind() {
-    // Show the modal when the LostMenu is bound
     this.showModal();
   }
 
-  // Unbind event listeners when the menu is inactive
   unbind() {
-    // Hide the modal when the LostMenu is unbound
     this.hideModal();
   }
 
@@ -277,9 +306,7 @@ export default class LostMenu {
     // No additional rendering needed; the canvas shows the space background
   }
 
-  // Clean up the modal when no longer needed
   destroy() {
     this.modalOverlay.remove();
   }
 }
-

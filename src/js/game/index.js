@@ -656,14 +656,15 @@ generateEnemiesAndItems() {
   }
 
   loose() {
+    // Pass the current score to the LostMenu
+    console.log('set highscore ', this.scoreBoard.score);
+    this.lostMenu.setGameValues(this.scoreBoard.score, this.scoreBoard.level);
+
     this.changeGameState(STATE.LOST);
     this.assets.playLaughingSound();
   
     // Stop the background music when the player loses
     this.assets.stopMusic();
-
-    // Pass the current score to the LostMenu
-    this.lostMenu.setGameValues(this.scoreBoard.score, this.scoreBoard.level);
   }
 
   win() {
