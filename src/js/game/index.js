@@ -85,45 +85,43 @@ export default class Game {
   showInitialOverlay() {
     // Detect if on mobile device
     const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-
-    // Create the overlay
+  
     this.initialOverlay = document.createElement('div');
     this.initialOverlay.style.position = 'fixed';
     this.initialOverlay.style.top = '0';
     this.initialOverlay.style.left = '0';
     this.initialOverlay.style.width = '100%';
     this.initialOverlay.style.height = '100%';
-    this.initialOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'; // Black with opacity
+    this.initialOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
     this.initialOverlay.style.display = 'flex';
+    this.initialOverlay.style.flexDirection = 'column';
     this.initialOverlay.style.justifyContent = 'center';
     this.initialOverlay.style.alignItems = 'center';
-    this.initialOverlay.style.zIndex = '1000'; // Ensure it appears above other elements
-
-    // Create the text
+    this.initialOverlay.style.zIndex = '1000';
+  
     this.overlayText = document.createElement('div');
     this.overlayText.style.fontSize = '24px';
     this.overlayText.style.color = '#ffffff';
-    this.overlayText.style.cursor = 'pointer';
-
+    this.overlayText.style.textAlign = 'center'; // Center text inside the element
+    this.overlayText.style.margin = '0'; // Remove default margins
+    this.overlayText.style.padding = '20px'; // Add some padding if needed
+  
     if (isMobile) {
-      // On mobile
       this.overlayText.textContent = 'Dieses Spiel funktioniert leider nur auf einem Desktop PC mit einer Tastatur';
       // Do not add a click event listener for mobile.
       this.overlayText.style.cursor = 'default';
     } else {
-      // On desktop
       this.overlayText.textContent = 'Click Me';
+      this.overlayText.style.cursor = 'pointer';
       this.initialOverlay.addEventListener('click', () => {
-        // Change the text to 'Loading...'
         this.overlayText.textContent = 'Loading...';
-        // Start initialization
         this.init();
       });
     }
-
+  
     this.initialOverlay.appendChild(this.overlayText);
     document.body.appendChild(this.initialOverlay);
-  }
+  }  
 
   init() {
     this.assets
