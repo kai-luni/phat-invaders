@@ -18,10 +18,10 @@ export default class HighScoreMenu {
     this.modalOverlay.style.left = '0';
     this.modalOverlay.style.width = '100%';
     this.modalOverlay.style.height = '100%';
-    // Change the alpha value from 0.8 to 0.3 for a more translucent background
+    // More translucent background
     this.modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
-    this.modalOverlay.style.display = 'none'; // Hidden by default
-    this.modalOverlay.style.zIndex = '1000'; // Ensure it appears above other elements
+    this.modalOverlay.style.display = 'none'; 
+    this.modalOverlay.style.zIndex = '1000';
 
     // Create the modal content container
     this.modalContent = document.createElement('div');
@@ -29,38 +29,41 @@ export default class HighScoreMenu {
     this.modalContent.style.top = '50%';
     this.modalContent.style.left = '50%';
     this.modalContent.style.transform = 'translate(-50%, -50%)';
-    this.modalContent.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'; // Translucent background for the content
+    this.modalContent.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
     this.modalContent.style.padding = '20px';
     this.modalContent.style.borderRadius = '5px';
     this.modalContent.style.textAlign = 'center';
     this.modalContent.style.width = '400px';
+    this.modalContent.style.fontFamily = 'Arial'; // Set font to Arial
 
     // Use the assets class for the High Scores image
     const highScoresImage = this.assets.highscoreTextTexture;
-    highScoresImage.style.width = '100%'; // Adjust width as needed
-    highScoresImage.style.marginBottom = '20px'; // Add spacing below the image
+    highScoresImage.style.width = '100%'; 
+    highScoresImage.style.marginBottom = '20px';
 
-    // Create the high score list container
+    // High score list container
     this.scoreListContainer = document.createElement('div');
     this.scoreListContainer.style.marginTop = '20px';
 
-    // Create a loading indicator
+    // Loading indicator (in German)
     this.loadingIndicator = document.createElement('p');
-    this.loadingIndicator.textContent = 'Loading high scores...';
-    this.loadingIndicator.style.color = '#9AF11C'; // Set font color
+    this.loadingIndicator.textContent = 'Lade Bestenliste...';
+    this.loadingIndicator.style.color = '#9AF11C'; 
+    this.loadingIndicator.style.fontFamily = 'Arial';
 
-    // Back button to return to the previous menu
+    // Back button (in German)
     this.backButton = document.createElement('button');
-    this.backButton.textContent = 'Play Again';
+    this.backButton.textContent = 'Nochmal spielen';
     this.backButton.style.width = '100%';
     this.backButton.style.padding = '10px';
     this.backButton.style.marginTop = '20px';
-    this.backButton.style.backgroundColor = '#9AF11C'; // Green background
-    this.backButton.style.color = 'black'; // Text color black
-    this.backButton.style.border = 'none'; // Remove border
+    this.backButton.style.backgroundColor = '#9AF11C'; 
+    this.backButton.style.color = 'black';
+    this.backButton.style.border = 'none';
     this.backButton.style.borderRadius = '5px';
     this.backButton.style.fontSize = '16px';
     this.backButton.style.cursor = 'pointer';
+    this.backButton.style.fontFamily = 'Arial';
 
     // Append elements to modal content
     this.modalContent.appendChild(highScoresImage);
@@ -80,18 +83,16 @@ export default class HighScoreMenu {
 
   async fetchHighScores() {
     try {
-      const response = await fetch(
-        'https://si-game-highscores-func.azurewebsites.net/api/GetHighScores'
-      );
+      const response = await fetch('https://si-game-highscores-func.azurewebsites.net/api/GetHighScores');
       if (response.ok) {
         const highScores = (await response.json()).highScores;
         this.displayHighScores(highScores);
       } else {
-        this.loadingIndicator.textContent = 'Failed to load high scores.';
+        this.loadingIndicator.textContent = 'Fehler beim Laden der Bestenliste.';
       }
     } catch (error) {
-      console.error('Error fetching high scores:', error);
-      this.loadingIndicator.textContent = 'An error occurred while loading high scores.';
+      console.error('Fehler beim Laden der Bestenliste:', error);
+      this.loadingIndicator.textContent = 'Ein Fehler ist beim Laden der Bestenliste aufgetreten.';
     }
   }
 
@@ -104,28 +105,32 @@ export default class HighScoreMenu {
     table.style.width = '100%';
     table.style.borderCollapse = 'collapse';
     table.style.marginTop = '10px';
+    table.style.fontFamily = 'Arial';
 
-    // Table header
+    // Table header (in German)
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
 
     const rankHeader = document.createElement('th');
-    rankHeader.textContent = 'Rank';
+    rankHeader.textContent = 'Platz';
     rankHeader.style.borderBottom = '1px solid #9AF11C';
     rankHeader.style.padding = '5px';
     rankHeader.style.color = '#9AF11C';
+    rankHeader.style.fontFamily = 'Arial';
 
     const nameHeader = document.createElement('th');
     nameHeader.textContent = 'Name';
     nameHeader.style.borderBottom = '1px solid #9AF11C';
     nameHeader.style.padding = '5px';
     nameHeader.style.color = '#9AF11C';
+    nameHeader.style.fontFamily = 'Arial';
 
     const scoreHeader = document.createElement('th');
-    scoreHeader.textContent = 'Score';
+    scoreHeader.textContent = 'Punkte';
     scoreHeader.style.borderBottom = '1px solid #9AF11C';
     scoreHeader.style.padding = '5px';
     scoreHeader.style.color = '#9AF11C';
+    scoreHeader.style.fontFamily = 'Arial';
 
     headerRow.appendChild(rankHeader);
     headerRow.appendChild(nameHeader);
@@ -144,18 +149,21 @@ export default class HighScoreMenu {
       rankCell.style.padding = '5px';
       rankCell.style.color = '#9AF11C';
       rankCell.style.borderBottom = '1px solid #9AF11C';
+      rankCell.style.fontFamily = 'Arial';
 
       const nameCell = document.createElement('td');
       nameCell.textContent = entry.name;
       nameCell.style.padding = '5px';
       nameCell.style.color = '#9AF11C';
       nameCell.style.borderBottom = '1px solid #9AF11C';
+      nameCell.style.fontFamily = 'Arial';
 
       const scoreCell = document.createElement('td');
-      scoreCell.textContent = entry.score; // Adjust if 'score' field has a different name
+      scoreCell.textContent = entry.score;
       scoreCell.style.padding = '5px';
       scoreCell.style.color = '#9AF11C';
       scoreCell.style.borderBottom = '1px solid #9AF11C';
+      scoreCell.style.fontFamily = 'Arial';
 
       row.appendChild(rankCell);
       row.appendChild(nameCell);
@@ -177,7 +185,7 @@ export default class HighScoreMenu {
   showModal() {
     // Reset the modal content
     this.loadingIndicator.style.display = 'block';
-    this.loadingIndicator.textContent = 'Loading high scores...';
+    this.loadingIndicator.textContent = 'Lade Bestenliste...';
     this.scoreListContainer.innerHTML = '';
 
     this.modalOverlay.style.display = 'block';
