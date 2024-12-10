@@ -439,25 +439,46 @@ generateEnemiesAndItems() {
    * Updates the position and direction of enemies.
    */
   updateEnemies() {
-
-    // Determine if 10 seconds have passed
+    // Determine if it's time for a special action (every msUntilEnemyGoDown ms)
     const currentTime = Date.now();
-    const triggerSpecialAction = this.lastSpecialActionTime
-      ? currentTime - this.lastSpecialActionTime >= this.msUntilEnemyGoDown
-      : true;
+    const triggerSpecialAction = !this.lastSpecialActionTime || 
+      (currentTime - this.lastSpecialActionTime >= this.msUntilEnemyGoDown);
 
     if (triggerSpecialAction) {
       this.lastSpecialActionTime = currentTime; // Reset the timer
     }
 
-    this.enemies.forEach((enemy) => {
-      // Pass the condition for every 10 seconds to the move method
-      enemy.move(triggerSpecialAction);
-    });
-
-    let frontEnemies = this.getLowestEnemiesByColumn(this.enemies);
+    // Identify front-most enemies (lowest in each column) and make them fire
+    const frontEnemies = this.getLowestEnemiesByColumn(this.enemies);
     frontEnemies.forEach((frontEnemy) => {
       frontEnemy.fire(this.enemyFireRate);
+    });
+
+    if (this.gameState === STATE.BOSS) {
+      //the boss can move by himself because he is alonge (no sync)
+      this.enemies.forEach((enemy) => {
+        enemy.move(triggerSpecialAction);
+      });
+      return;
+    }
+
+    // If there are no enemies, nothing to do
+    if (this.enemies.length < 1) return;
+
+    // Determine direction based on the first enemy's distance from its anchor
+    const firstEnemy = this.enemies[0];
+    const distance = firstEnemy.getDistanceFromAnchor();
+    let direction = firstEnemy.direction.x;
+
+    if (distance < -160) {
+      direction = 1;
+    } else if (distance > 160) {
+      direction = -1;
+    }
+
+    // Update all enemies based on the determined direction
+    this.enemies.forEach((enemy) => {
+      enemy.move(triggerSpecialAction, direction);
     });
   }
 

@@ -70,31 +70,20 @@ export default class Enemy extends GameObject {
     return hit;
   }
 
-/**
- * Updates the enemy's position.
- * Moves left and right within 200 units from anchorX.
- * If more than 200 units left of anchorX, go right.
- * If more than 200 units right of anchorX, go left.
- * @param {boolean} goDown - Indicates whether the enemy should move down.
- */
-move(goDown) {
-  // Calculate the offset from the anchor position
-  const offsetFromAnchor = this.x - this.anchorX;
-
-  // Check if enemy is more than 200 units to the left or right of anchorX
-  if (offsetFromAnchor <= -160) {
-    this.direction.x = 1; // Go right
-  } else if (offsetFromAnchor >= 160) {
-    this.direction.x = -1; // Go left
+  getDistanceFromAnchor() {
+    return  this.x - this.anchorX;
   }
 
-  if (goDown) {
-    this.y += this.height;
-  }
+  move(goDown, direction) {
+    this.direction.x = direction;
 
-  // Update position based on direction and velocity
-  this.x += this.direction.x * this.velocity;
-}
+    if (goDown) {
+      this.y += this.height;
+    }
+
+    // Update position based on direction and velocity
+    this.x += this.direction.x * this.velocity;
+  }
 
 
   /**
