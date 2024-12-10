@@ -642,9 +642,6 @@ export default class Game {
    * @param {number} row - The row number to target for destruction.
    */
   destroyRow(row) {
-    // Record the initial number of enemies
-    const initialCount = this.enemies.length;
-
     // Mark enemies in the given row for death
     this.enemies.forEach((enemy) => {
       if (enemy.row === row) {
@@ -663,12 +660,6 @@ export default class Game {
 
     // Filter out dead enemies
     this.enemies = this.enemies.filter((enemy) => enemy.row !== row || !enemy.dead);
-
-    // Calculate how many enemies were removed
-    const removedCount = initialCount - this.enemies.length;
-
-    // Update the killCounter with the number of actually removed enemies
-    //this.killCounter += removedCount;
   }
   
 
