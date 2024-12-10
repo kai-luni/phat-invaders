@@ -5,14 +5,16 @@
   "main": "index.js",
   "dependencies": {
     "@azure/cosmos": "^4.1.1",
+    "@jridgewell/gen-mapping": "^0.3.6",
     "express": "^4.21.1"
   },
   "devDependencies": {
-    "parcel-bundler": "^1.11.0",
+    "@parcel/transformer-raw": "^2.13.2",
+    "parcel": "^2.13.2",
     "rimraf": "^2.6.3"
   },
   "scripts": {
-    "dev": "parcel src/*.html --port 3002",
+    "dev": "parcel serve src/*.html --port 3002",
     "prebuild": "npm run cleanup",
     "build": "parcel build src/*.html",
     "cleanup": "rimraf .cache dist",
