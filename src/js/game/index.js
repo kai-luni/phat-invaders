@@ -83,6 +83,9 @@ export default class Game {
   }
 
   showInitialOverlay() {
+    // Detect if on mobile device
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+
     // Create the overlay
     this.initialOverlay = document.createElement('div');
     this.initialOverlay.style.position = 'fixed';
@@ -98,22 +101,27 @@ export default class Game {
 
     // Create the text
     this.overlayText = document.createElement('div');
-    this.overlayText.textContent = 'Click Me';
     this.overlayText.style.fontSize = '24px';
     this.overlayText.style.color = '#ffffff';
     this.overlayText.style.cursor = 'pointer';
 
+    if (isMobile) {
+      // On mobile
+      this.overlayText.textContent = 'Dieses Spiel funktioniert leider nur auf einem Desktop PC mit einer Tastatur';
+      // Do not add a click event listener for mobile.
+      this.overlayText.style.cursor = 'default';
+    } else {
+      // On desktop
+      this.overlayText.textContent = 'Click Me';
+      this.initialOverlay.addEventListener('click', () => {
+        // Change the text to 'Loading...'
+        this.overlayText.textContent = 'Loading...';
+        // Start initialization
+        this.init();
+      });
+    }
+
     this.initialOverlay.appendChild(this.overlayText);
-
-    // Add click event listener
-    this.initialOverlay.addEventListener('click', () => {
-      // Change the text to 'Loading...'
-      this.overlayText.textContent = 'Loading...';
-      // Start initialization
-      this.init();
-    });
-
-    // Add the overlay to the body
     document.body.appendChild(this.initialOverlay);
   }
 
@@ -518,10 +526,9 @@ export default class Game {
     let enemyMissilesHit = [];
     let rowsToKill = [];
   
-    // Record the initial number of enemies before collision checks
     const initialEnemyCount = this.enemies.length;
   
-    // Check collisions between player missiles and enemies
+    // Player missiles vs enemies
     this.enemies.forEach((enemy) => {
       this.player.missiles.forEach((missile) => {
         if (enemy.hit(missile)) {
@@ -535,10 +542,7 @@ export default class Game {
             this.player.shootTripple();
           }
   
-          // If enemy is dead, don't increment killCounter here.
-          // We'll handle counting after filtering arrays.
           if (enemy.dead) {
-            // enemy.die() was already called inside hit()
             this.scoreBoard.incrementScore(this.reward);
             enemiesHit.push(enemy);
           }
@@ -548,12 +552,11 @@ export default class Game {
       });
     });
   
-    // destroy row from special item
     rowsToKill.forEach((row) => {
       this.destroyRow(row);
     });
   
-    // Check collisions between enemy missiles and player
+    // Enemy missiles vs player
     this.enemies.forEach((enemy) => {
       enemy.missiles.forEach((missile) => {
         if (this.player.hit(missile)){
@@ -563,7 +566,7 @@ export default class Game {
       });
     });
   
-    // Check collisions between player's missiles and blocks
+    // Player missiles vs blocks
     this.blocks.forEach((block) => {
       this.player.missiles.forEach((missile) => {
         if (block.hit(missile)) {
@@ -574,7 +577,7 @@ export default class Game {
       });
     });
   
-    // Check collisions between enemy missiles and blocks
+    // Enemy missiles vs blocks
     this.blocks.forEach((block) => {
       this.enemies.forEach((enemy) => {
         enemy.missiles.forEach((missile) => {
@@ -586,7 +589,7 @@ export default class Game {
       });
     });
   
-    // Check collisions between enemies and blocks
+    // Enemies vs blocks
     this.blocks.forEach((block) => {
       this.enemies.forEach((enemy) => {
         if (block.hit(enemy)) {
@@ -595,7 +598,7 @@ export default class Game {
       });
     });
   
-    // Check collisions between player missiles and enemy missiles
+    // Player missiles vs enemy missiles
     this.player.missiles.forEach((playerMissile) => {
       this.enemies.forEach((enemy) => {
         enemy.missiles.forEach((enemyMissile) => {
@@ -607,14 +610,13 @@ export default class Game {
       });
     });
   
-    // Check if any enemy reaches the player's y position
+    // Check if any enemy reaches the player
     this.enemies.forEach((enemy) => {
       if (enemy.y + enemy.height > this.player.y) {
         this.loose();
       }
     });
   
-    // Remove hit entities
     this.blocks = this.blocks.filter((block) => !blocksHit.includes(block));
     this.enemies = this.enemies.filter((enemy) => !enemiesHit.includes(enemy));
     this.player.missiles = this.player.missiles.filter((missile) => !playerMissilesHit.includes(missile));
@@ -622,17 +624,14 @@ export default class Game {
       enemy.missiles = enemy.missiles.filter((missile) => !enemyMissilesHit.includes(missile));
     });
   
-    // Calculate how many enemies were actually removed
     const removedEnemies = initialEnemyCount - this.enemies.length;
     this.killCounter += removedEnemies;
   
-    // If no enemies left, the game is won
     if (!this.enemies.length) {
       this.win();
     }
   }
-  
-
+ 
   /**
    * Destroys all enemies in the specified row.
    * 
@@ -661,10 +660,9 @@ export default class Game {
     // Filter out dead enemies
     this.enemies = this.enemies.filter((enemy) => enemy.row !== row || !enemy.dead);
   }
-  
 
   loose() {
-    // Log some values at the end of the level
+    // Log some values at game over
     this.log.sessions.push({
       timestamp: Date.now(),
       killCounter: this.killCounter,
@@ -682,8 +680,6 @@ export default class Game {
     this.changeGameState(STATE.LOST);
     this.assets.playLaughingSound();
     this.assets.stopMusic();
-
-
   }
 
   win() {
