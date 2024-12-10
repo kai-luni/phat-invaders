@@ -51,6 +51,13 @@ canvas#game {
   background-position: center;
 
   /* Full height and square width */
-  height: 100%; /* Full viewport height */
-  aspect-ratio: 1 / 1; /* Maintain square shape */
+  height: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+/* Hide background blocks on smaller screens */
+@media (max-width: 800px) {
+  .background-block {
+    display: none;
+  }
 }
