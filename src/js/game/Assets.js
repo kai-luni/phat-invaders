@@ -20,7 +20,7 @@ import gameOverTexture from '../../assets/graphics/game_over_text.png';
 import headlineTexture from '../../assets/graphics/headline.png';
 
 // Sounds
-import bossMusic from '../../assets/audio/boss_music.mp3';
+import bossMusic from '../../assets/audio/boss_music_2.mp3';
 import boostSound from '../../assets/audio/boost.mp3';
 import fireSound from '../../assets/audio/080245_sfx_magic_84935.mp3';
 import gameMusic from '../../assets/audio/happy_christmas_background_music_small.mp3';

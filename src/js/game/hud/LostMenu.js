@@ -5,8 +5,8 @@ export default class LostMenu {
   constructor(assets) {
     this.assets = assets;
     this.events = new Events();
-    this.highScore = 0; // Initialize with 0 as default
-    this.level = 0;     // Initialize level as well if needed
+    this.highScore = 0; 
+    this.level = 0;     
 
     // Create the modal elements
     this.createModal();
@@ -21,8 +21,8 @@ export default class LostMenu {
     this.modalOverlay.style.width = '100%';
     this.modalOverlay.style.height = '100%';
     this.modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-    this.modalOverlay.style.display = 'none'; // Hidden by default
-    this.modalOverlay.style.zIndex = '1000'; // Ensure it appears above other elements
+    this.modalOverlay.style.display = 'none'; 
+    this.modalOverlay.style.zIndex = '1000'; 
 
     // Create the modal content container
     this.modalContent = document.createElement('div');
@@ -30,63 +30,64 @@ export default class LostMenu {
     this.modalContent.style.top = '50%';
     this.modalContent.style.left = '50%';
     this.modalContent.style.transform = 'translate(-50%, -50%)';
-    this.modalContent.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'; // Translucent background
+    this.modalContent.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
     this.modalContent.style.padding = '20px';
     this.modalContent.style.borderRadius = '5px';
     this.modalContent.style.textAlign = 'center';
     this.modalContent.style.width = '400px';
+    this.modalContent.style.fontFamily = 'Arial'; // Set font to Arial
 
     // Use the assets class for the Game Over image
     const gameOverImage = this.assets.gameOverTextTexture;
     gameOverImage.style.width = '100%';
     gameOverImage.style.marginBottom = '20px';
 
-    // Define instructions as a class property
+    // Instructions (in German)
     this.instructions = document.createElement('p');
     this.instructions.textContent =
-      'Would you like to see your amazing success in the scoreboard? Then enter your gamer name and email address here.';
+      'Möchtest du deinen beeindruckenden Erfolg in der Rangliste sehen? Gib hier deinen Spielernamen und deine E-Mail-Adresse ein.';
     this.instructions.style.color = '#9AF11C';
     this.instructions.style.marginTop = '10px';
     this.instructions.style.fontSize = '14px';
 
-    // Define warning as a class property
+    // Warning text (in German)
     this.warning = document.createElement('p');
     this.warning.textContent =
-      'If you leave this page without submitting your gamer name and email address, your score will be lost.';
+      'Wenn du diese Seite verlässt, ohne deinen Spielernamen und deine E-Mail-Adresse einzugeben, geht dein Punktestand verloren.';
     this.warning.style.color = '#9AF11C';
     this.warning.style.marginTop = '10px';
     this.warning.style.fontSize = '12px';
 
-    // Define nameLabel as a class property
+    // Name label (in German)
     this.nameLabel = document.createElement('label');
-    this.nameLabel.textContent = 'Gamer Name';
+    this.nameLabel.textContent = 'Spielername';
     this.nameLabel.style.display = 'block';
     this.nameLabel.style.marginTop = '20px';
     this.nameLabel.style.color = '#9AF11C';
 
-    // Define nameInput
+    // Name input
     this.nameInput = document.createElement('input');
     this.nameInput.type = 'text';
-    this.nameInput.placeholder = 'Enter your gamer name';
+    this.nameInput.placeholder = 'Spielername eingeben';
     this.nameInput.style.width = '100%';
     this.nameInput.style.padding = '8px';
     this.nameInput.style.marginTop = '5px';
-    this.nameInput.style.backgroundColor = '#000000'; // Black background
-    this.nameInput.style.color = '#9AF11C'; // Font color
-    this.nameInput.style.border = `1px solid #9AF11C`; // Outline color
+    this.nameInput.style.backgroundColor = '#000000';
+    this.nameInput.style.color = '#9AF11C';
+    this.nameInput.style.border = `1px solid #9AF11C`;
     this.nameInput.style.borderRadius = '5px';
 
-    // Define emailLabel as a class property
+    // Email label (in German)
     this.emailLabel = document.createElement('label');
-    this.emailLabel.textContent = 'Email Address';
+    this.emailLabel.textContent = 'E-Mail-Adresse';
     this.emailLabel.style.display = 'block';
     this.emailLabel.style.marginTop = '10px';
     this.emailLabel.style.color = '#9AF11C';
 
-    // Define emailInput
+    // Email input
     this.emailInput = document.createElement('input');
     this.emailInput.type = 'email';
-    this.emailInput.placeholder = 'Enter your email address';
+    this.emailInput.placeholder = 'E-Mail-Adresse eingeben';
     this.emailInput.style.width = '100%';
     this.emailInput.style.padding = '8px';
     this.emailInput.style.marginTop = '5px';
@@ -95,22 +96,22 @@ export default class LostMenu {
     this.emailInput.style.border = `1px solid #9AF11C`;
     this.emailInput.style.borderRadius = '5px';
 
-    // Submit button
+    // Submit button (in German)
     this.modalSubmitButton = document.createElement('button');
-    this.modalSubmitButton.textContent = 'Add my score to the board';
+    this.modalSubmitButton.textContent = 'Punktestand eintragen';
     this.modalSubmitButton.style.width = '100%';
     this.modalSubmitButton.style.padding = '10px';
     this.modalSubmitButton.style.marginTop = '20px';
-    this.modalSubmitButton.style.backgroundColor = '#9AF11C'; // Green background
-    this.modalSubmitButton.style.color = 'black'; // Text color black
+    this.modalSubmitButton.style.backgroundColor = '#9AF11C';
+    this.modalSubmitButton.style.color = 'black';
     this.modalSubmitButton.style.border = 'none';
     this.modalSubmitButton.style.borderRadius = '5px';
     this.modalSubmitButton.style.fontSize = '16px';
     this.modalSubmitButton.style.cursor = 'pointer';
 
-    // Try Again button
+    // Try Again button (in German)
     this.tryAgainButton = document.createElement('button');
-    this.tryAgainButton.textContent = 'Try again';
+    this.tryAgainButton.textContent = 'Erneut versuchen';
     this.tryAgainButton.style.width = '100%';
     this.tryAgainButton.style.padding = '10px';
     this.tryAgainButton.style.marginTop = '10px';
@@ -121,12 +122,12 @@ export default class LostMenu {
     this.tryAgainButton.style.fontSize = '16px';
     this.tryAgainButton.style.cursor = 'pointer';
 
-    // Message display
+    // Message display (in German)
     this.messageDisplay = document.createElement('p');
     this.messageDisplay.style.marginTop = '20px';
     this.messageDisplay.style.color = '#9AF11C';
 
-    // New German text block (smaller and green)
+    // German info text
     this.germanInfo = document.createElement('p');
     this.germanInfo.innerHTML = `Der/die GewinnerIn erhält eine kleine Überraschung. Die Gewinnbenachrichtigung erfolgt per Mail. Ihre personenbezogenen Daten verwenden wir aufgrund Art. 6 Abs. 1 lit. b) DS-GVO nur zur Durchführung des Gewinnspiels und geben sie nicht an Dritte weiter. <a href="https://www.phatconsulting.de/impressum-datenschutz/" target="_blank" style="color:#9AF11C;">Anbieterkennzeichnung und mehr Datenschutzinformationen</a>`;
     this.germanInfo.style.color = '#9AF11C';
@@ -165,7 +166,7 @@ export default class LostMenu {
     if (email !== '') {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
-        this.messageDisplay.textContent = 'Invalid email address format.';
+        this.messageDisplay.textContent = 'Ungültiges E-Mail-Format.';
         return;
       }
     }
@@ -192,7 +193,7 @@ export default class LostMenu {
       );
 
       if (response.ok) {
-        this.messageDisplay.textContent = 'High score submitted successfully!';
+        this.messageDisplay.textContent = 'Punktestand erfolgreich eingetragen!';
         // Deactivate all inputs and buttons after sending
         this.nameInput.disabled = true;
         this.emailInput.disabled = true;
@@ -215,11 +216,11 @@ export default class LostMenu {
         // Emit 'highscore' event
         this.events.emit('highscore');
       } else {
-        this.messageDisplay.textContent = 'Failed to submit high score. Try again!';
+        this.messageDisplay.textContent = 'Punktestand konnte nicht eingetragen werden. Bitte erneut versuchen!';
       }
     } catch (error) {
       console.error('Error submitting high score:', error);
-      this.messageDisplay.textContent = 'An error occurred while submitting the high score.';
+      this.messageDisplay.textContent = 'Beim Eintragen des Punktestands ist ein Fehler aufgetreten.';
     }
   }
 
@@ -270,9 +271,6 @@ export default class LostMenu {
       this.emailInput.style.display = 'none';
       this.modalSubmitButton.style.display = 'none';
       this.messageDisplay.style.display = 'none';
-      this.germanInfo.style.display = 'block'; // The user didn't say to remove this, but previously said only show image and button.
-      // According to the previous instructions, we only show the game over graphic and try again button.
-      // So let's hide germanInfo as well if the score is too low.
       this.germanInfo.style.display = 'none';
     }
 
@@ -303,7 +301,7 @@ export default class LostMenu {
   }
 
   render() {
-    // No additional rendering needed; the canvas shows the space background
+    // No additional rendering needed
   }
 
   destroy() {
