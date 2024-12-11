@@ -98,7 +98,6 @@ export default class Player extends GameObject {
   }
 
   setFireRate(fireRate) {
-    console.log('set firerate to ', fireRate);
     this.fireRate = fireRate;
     this.defaultFireRate = fireRate;
   }

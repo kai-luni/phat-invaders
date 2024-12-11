@@ -123,7 +123,6 @@ export default class Assets {
       // Wait for all assets to load
       await Promise.all([...audioPromises, ...texturePromises]);
 
-      console.log('All assets loaded successfully');
     } catch (error) {
       console.error('Error loading assets:', error);
       throw error;
@@ -291,7 +290,6 @@ export default class Assets {
   soundOn() {
     this.soundEnabled = true;
     this.setVolume(0.14); // Restore to the default global volume
-    console.log('Sound is turned ON');
   }
 
   /**
@@ -300,6 +298,5 @@ export default class Assets {
   soundOff() {
     this.soundEnabled = false;
     this.setVolume(0.0); // Mute the global volume
-    console.log('Sound is turned OFF');
   }
 }

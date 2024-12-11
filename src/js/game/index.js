@@ -241,7 +241,6 @@ export default class Game {
         this.highScoreMenu.unbind();
     }
 
-    console.log("New State: ", newState);
     // Update the game state
     this.gameState = newState;
 
@@ -682,11 +681,6 @@ export default class Game {
     this.enemyFireRate -= this.enemyFireRate / 6;
     this.msUntilEnemyGoDown -= this.msUntilEnemyGoDown / 14;
     this.reward += (this.scoreBoard.level < 8) ?  4 : this.phatHelper.getRewardForNextLevel(this.scoreBoard.level);
-    console.log("Upgrade");
-    console.log("Speed " + this.enemyVelocity);
-    console.log("Firerate " + this.enemyFireRate);
-    console.log("Go Down Speed" + this.msUntilEnemyGoDown);
-    console.log('killcounter: ', this.killCounter);
 
     // Log some values at the end of the level
     this.log.sessions.push({
