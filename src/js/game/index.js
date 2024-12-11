@@ -674,7 +674,7 @@ export default class Game {
       msUntilEnemyGoDown: this.msUntilEnemyGoDown
     });
 
-    this.lostMenu.setGameValues(this.scoreBoard.score, this.scoreBoard.level, this.log);
+    this.lostMenu.setGameValues(this.scoreBoard.score, this.scoreBoard.level, JSON.stringify(this.log));
     this.changeGameState(STATE.LOST);
     this.assets.playLaughingSound();
     this.assets.stopMusic();
