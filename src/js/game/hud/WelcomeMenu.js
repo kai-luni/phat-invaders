@@ -82,7 +82,7 @@ export default class WelcomeMenu {
     canvas.ctx.clearRect(0, 0, this.width, this.height);
 
     // Draw Santa Image (assuming 700x490 from original code)
-    canvas.ctx.drawImage(this.santaImage, 70, 160, 800, 610);
+    canvas.ctx.drawImage(this.santaImage, 100, 160, 800, 610);
 
     // Set font for the text and button
     canvas.ctx.font = '18px Arial';
