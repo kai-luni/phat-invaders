@@ -113,13 +113,15 @@ export default class LostMenu {
     this.modalSubmitButton.style.fontSize = '16px';
     this.modalSubmitButton.style.cursor = 'pointer';
 
-    // Warning text (in German)
+    // Create the warning text (in German)
     this.warning = document.createElement('p');
     this.warning.textContent =
       'Wenn du diese Seite verlässt, ohne deinen Spielernamen und deine E-Mail-Adresse einzugeben, geht dein Punktestand verloren.';
     this.warning.style.color = '#9AF11C';
     this.warning.style.marginTop = '10px';
     this.warning.style.fontSize = '12px';
+    // Make the warning text bold
+    this.warning.style.fontWeight = 'bold';
 
     // Try Again button (in German)
     this.tryAgainButton = document.createElement('button');
@@ -150,12 +152,19 @@ export default class LostMenu {
     this.modalContent.appendChild(gameOverImage);
     this.modalContent.appendChild(this.scoreInfo); 
     this.modalContent.appendChild(this.instructions);
-    this.modalContent.appendChild(this.warning);
+    
+    // Remove this line from the original position to move it below
+    // this.modalContent.appendChild(this.warning);
+    
     this.modalContent.appendChild(this.nameLabel);
     this.modalContent.appendChild(this.nameInput);
     this.modalContent.appendChild(this.emailLabel);
     this.modalContent.appendChild(this.emailInput);
     this.modalContent.appendChild(this.modalSubmitButton);
+    
+    // Re-insert the warning text here, between the two buttons
+    this.modalContent.appendChild(this.warning);
+    
     this.modalContent.appendChild(this.tryAgainButton);
     this.modalContent.appendChild(this.messageDisplay);
     this.modalContent.appendChild(this.germanInfo);
