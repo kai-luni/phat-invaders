@@ -15,7 +15,7 @@
   "scripts": {
     "dev": "parcel serve src/*.html --port 3002",
     "prebuild": "npm run cleanup",
-    "build": "parcel build src/*.html",
+    "build": "parcel build src/*.html --no-source-maps",
     "cleanup": "rimraf .cache dist",
     "start": "node server.js"
   },
