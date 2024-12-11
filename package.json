@@ -2,7 +2,6 @@
   "name": "spaceinvaders",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "dependencies": {
     "@azure/cosmos": "^4.1.1",
     "@jridgewell/gen-mapping": "^0.3.6",
@@ -20,6 +19,6 @@
     "cleanup": "rimraf .cache dist",
     "start": "node server.js"
   },
-  "author": "benjamin Caradeuc <benjamin@caradeuc.info>",
+  "author": "Kai Luenstaeden <klu@phatconsulting.com>",
   "license": "MIT"
 }
