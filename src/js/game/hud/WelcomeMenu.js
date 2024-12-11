@@ -23,7 +23,7 @@ export default class WelcomeMenu {
 
     // Initialize the button
     this.btn = new Button({
-      text: 'Jetzt Weihnachten retten',
+      text: 'Starte jetzt deine Challenge',
       x: this.width / 2,
       y: 750, // We'll place the button below the text line
       color: '#9AF11C', // Set the button background color to green
