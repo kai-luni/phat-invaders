@@ -7,6 +7,7 @@ export default class LostMenu {
     this.events = new Events();
     this.highScore = 0; 
     this.level = 0;     
+    this.log = {};
 
     // Create the modal elements
     this.createModal();
@@ -37,10 +38,16 @@ export default class LostMenu {
     this.modalContent.style.width = '400px';
     this.modalContent.style.fontFamily = 'Arial'; // Set font to Arial
 
-    // Use the assets class for the Game Over image
+    // Game Over image
     const gameOverImage = this.assets.gameOverTextTexture;
     gameOverImage.style.width = '100%';
     gameOverImage.style.marginBottom = '20px';
+
+    // Display final score and level (like a scoreboard)
+    this.scoreInfo = document.createElement('p');
+    this.scoreInfo.style.color = '#9AF11C';
+    this.scoreInfo.style.fontSize = '24px';
+    this.scoreInfo.style.marginTop = '10px';
 
     // Instructions (in German)
     this.instructions = document.createElement('p');
@@ -69,7 +76,9 @@ export default class LostMenu {
     this.nameInput = document.createElement('input');
     this.nameInput.type = 'text';
     this.nameInput.placeholder = 'Spielername eingeben';
-    this.nameInput.style.width = '100%';
+    this.nameInput.style.marginLeft = 'auto';
+    this.nameInput.style.marginRight = 'auto';
+    this.nameInput.style.width = '80%';
     this.nameInput.style.padding = '8px';
     this.nameInput.style.marginTop = '5px';
     this.nameInput.style.backgroundColor = '#000000';
@@ -88,7 +97,9 @@ export default class LostMenu {
     this.emailInput = document.createElement('input');
     this.emailInput.type = 'email';
     this.emailInput.placeholder = 'E-Mail-Adresse eingeben';
-    this.emailInput.style.width = '100%';
+    this.emailInput.style.marginLeft = 'auto';
+    this.emailInput.style.marginRight = 'auto';
+    this.emailInput.style.width = '80%';
     this.emailInput.style.padding = '8px';
     this.emailInput.style.marginTop = '5px';
     this.emailInput.style.backgroundColor = '#000000';
@@ -136,6 +147,7 @@ export default class LostMenu {
 
     // Append elements to modal content
     this.modalContent.appendChild(gameOverImage);
+    this.modalContent.appendChild(this.scoreInfo); 
     this.modalContent.appendChild(this.instructions);
     this.modalContent.appendChild(this.warning);
     this.modalContent.appendChild(this.nameLabel);
@@ -159,8 +171,29 @@ export default class LostMenu {
   }
 
   async onModalSubmit() {
-    const playerName = this.nameInput.value.trim() || 'Anonymous';
+    const playerName = this.nameInput.value.trim();
     let email = this.emailInput.value.trim();
+
+    // Validate playerName:
+    // 1) Length check (e.g., max 20 chars)
+    // 2) Allowed chars: letters, numbers, underscore, hyphen (adjust as needed)
+    const nameMaxLength = 20;
+    const nameRegex = /^[a-zA-Z0-9_-]+$/; // letters, digits, underscore, hyphen
+
+    if (!playerName) {
+      this.messageDisplay.textContent = 'Spielername darf nicht leer sein.';
+      return;
+    }
+
+    if (playerName.length > nameMaxLength) {
+      this.messageDisplay.textContent = `Spielername darf maximal ${nameMaxLength} Zeichen lang sein.`;
+      return;
+    }
+
+    if (!nameRegex.test(playerName)) {
+      this.messageDisplay.textContent = 'Spielername enthält ungültige Zeichen. Erlaubt sind Buchstaben, Zahlen, "_" und "-".';
+      return;
+    }
 
     // Validate email if provided
     if (email !== '') {
@@ -195,26 +228,23 @@ export default class LostMenu {
 
       if (response.ok) {
         this.messageDisplay.textContent = 'Punktestand erfolgreich eingetragen!';
-        // Deactivate all inputs and buttons after sending
+        // Disable inputs and buttons
         this.nameInput.disabled = true;
         this.emailInput.disabled = true;
         this.modalSubmitButton.disabled = true;
         this.tryAgainButton.disabled = true;
 
-        // Change cursor style
+        const disabledOpacity = '0.5';
         this.nameInput.style.cursor = 'not-allowed';
         this.emailInput.style.cursor = 'not-allowed';
         this.modalSubmitButton.style.cursor = 'not-allowed';
         this.tryAgainButton.style.cursor = 'not-allowed';
 
-        // Adjust styles to indicate disabled state
-        const disabledOpacity = '0.5';
         this.nameInput.style.opacity = disabledOpacity;
         this.emailInput.style.opacity = disabledOpacity;
         this.modalSubmitButton.style.opacity = disabledOpacity;
         this.tryAgainButton.style.opacity = disabledOpacity;
 
-        // Emit 'highscore' event
         this.events.emit('highscore');
       } else {
         this.messageDisplay.textContent = 'Punktestand konnte nicht eingetragen werden. Bitte erneut versuchen!';
@@ -239,20 +269,20 @@ export default class LostMenu {
     this.modalSubmitButton.disabled = false;
     this.tryAgainButton.disabled = false;
 
-    // Reset cursor styles
     this.nameInput.style.cursor = 'text';
     this.emailInput.style.cursor = 'text';
     this.modalSubmitButton.style.cursor = 'pointer';
     this.tryAgainButton.style.cursor = 'pointer';
 
-    // Reset opacity
     this.nameInput.style.opacity = '1';
     this.emailInput.style.opacity = '1';
     this.modalSubmitButton.style.opacity = '1';
     this.tryAgainButton.style.opacity = '1';
 
+    // Update scoreInfo text with the final score and level
+    this.scoreInfo.textContent = `Dein Score: ${this.highScore} | Level: ${this.level}`;
+
     if (this.canSubmitHighscore()) {
-      // Score is higher than 5000, show all elements
       this.instructions.style.display = 'block';
       this.warning.style.display = 'block';
       this.nameLabel.style.display = 'block';
@@ -263,7 +293,6 @@ export default class LostMenu {
       this.messageDisplay.style.display = 'block';
       this.germanInfo.style.display = 'block';
     } else {
-      // Score is 5000 or less, only show the gameOverImage and tryAgainButton
       this.instructions.style.display = 'none';
       this.warning.style.display = 'none';
       this.nameLabel.style.display = 'none';
