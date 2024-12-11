@@ -118,7 +118,8 @@ export default class LostMenu {
     this.warning.textContent =
       'Wenn du diese Seite verlässt, ohne deinen Spielernamen und deine E-Mail-Adresse einzugeben, geht dein Punktestand verloren.';
     this.warning.style.color = '#9AF11C';
-    this.warning.style.marginTop = '10px';
+    this.warning.style.marginTop = '20px'; // Original marginTop (10px) + additional 10px = 20px
+    this.warning.style.marginBottom = '10px'; // To keep the spacing below as is
     this.warning.style.fontSize = '12px';
     // Make the warning text bold
     this.warning.style.fontWeight = 'bold';
