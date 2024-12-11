@@ -153,8 +153,8 @@ export default class ScoreBoard {
    */
   renderSoundIcon() {
     const texture = this.soundOn
-      ? this.assets.soundOffTexture
-      : this.assets.soundOnTexture;
+      ? this.assets.soundOnTexture
+      : this.assets.soundOffTexture;
 
     canvas.ctx.drawImage(
       texture,

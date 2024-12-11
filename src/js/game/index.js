@@ -86,42 +86,38 @@ export default class Game {
     // Detect if on mobile device
     const isMobile = /Mobi|Android/i.test(navigator.userAgent);
   
-    this.initialOverlay = document.createElement('div');
-    this.initialOverlay.style.position = 'fixed';
-    this.initialOverlay.style.top = '0';
-    this.initialOverlay.style.left = '0';
-    this.initialOverlay.style.width = '100%';
-    this.initialOverlay.style.height = '100%';
-    this.initialOverlay.style.backgroundColor = 'rgba(0, 0, 0, 1)';
-    this.initialOverlay.style.display = 'flex';
-    this.initialOverlay.style.flexDirection = 'column';
-    this.initialOverlay.style.justifyContent = 'center';
-    this.initialOverlay.style.alignItems = 'center';
-    this.initialOverlay.style.zIndex = '1000';
-  
-    this.overlayText = document.createElement('div');
-    this.overlayText.style.fontSize = '20px';
-    this.overlayText.style.color = '#ffffff';
-    this.overlayText.style.textAlign = 'center'; // Center text inside the element
-    this.overlayText.style.margin = '0'; // Remove default margins
-    this.overlayText.style.padding = '20px'; // Add some padding if needed
-  
     if (isMobile) {
-      this.overlayText.textContent = 'Dieses Spiel funktioniert leider nur auf einem Desktop PC mit einer Tastatur';
-      // Do not add a click event listener for mobile.
-      this.overlayText.style.cursor = 'default';
-    } else {
-      this.overlayText.textContent = 'Click Me';
-      this.overlayText.style.cursor = 'pointer';
-      this.initialOverlay.addEventListener('click', () => {
-        this.overlayText.textContent = 'Loading...';
-        this.init();
-      });
-    }
+      // Create and show the overlay for mobile devices
+      this.initialOverlay = document.createElement('div');
+      this.initialOverlay.style.position = 'fixed';
+      this.initialOverlay.style.top = '0';
+      this.initialOverlay.style.left = '0';
+      this.initialOverlay.style.width = '100%';
+      this.initialOverlay.style.height = '100%';
+      this.initialOverlay.style.backgroundColor = 'rgba(0, 0, 0, 1)';
+      this.initialOverlay.style.display = 'flex';
+      this.initialOverlay.style.flexDirection = 'column';
+      this.initialOverlay.style.justifyContent = 'center';
+      this.initialOverlay.style.alignItems = 'center';
+      this.initialOverlay.style.zIndex = '1000';
   
-    this.initialOverlay.appendChild(this.overlayText);
-    document.body.appendChild(this.initialOverlay);
-  }  
+      this.overlayText = document.createElement('div');
+      this.overlayText.style.fontSize = '20px';
+      this.overlayText.style.color = '#ffffff';
+      this.overlayText.style.textAlign = 'center'; 
+      this.overlayText.style.margin = '0'; 
+      this.overlayText.style.padding = '20px'; 
+      this.overlayText.textContent = 'Dieses Spiel funktioniert leider nur auf einem Desktop PC mit einer Tastatur';
+      this.overlayText.style.cursor = 'default';
+  
+      this.initialOverlay.appendChild(this.overlayText);
+      document.body.appendChild(this.initialOverlay);
+    } else {
+      // If not mobile, directly initialize the game without any overlay
+      this.init();
+    }
+  }
+  
 
   init() {
     this.assets
