@@ -150,11 +150,6 @@ export default class Game {
       this.keysPressed[e.keyCode] = true;
 
       if (this.gameState !== STATE.PLAYING && this.gameState !== STATE.BOSS) return;
-
-      // Debug key to win the level
-      if (e.key === 'd' || e.key === 'D') {
-        this.win(); // Call the win method
-      }
     });
 
     window.addEventListener('keyup', (e) => {

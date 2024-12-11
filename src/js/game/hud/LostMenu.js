@@ -57,13 +57,6 @@ export default class LostMenu {
     this.instructions.style.marginTop = '10px';
     this.instructions.style.fontSize = '14px';
 
-    // Warning text (in German)
-    this.warning = document.createElement('p');
-    this.warning.textContent =
-      'Wenn du diese Seite verlässt, ohne deinen Spielernamen und deine E-Mail-Adresse einzugeben, geht dein Punktestand verloren.';
-    this.warning.style.color = '#9AF11C';
-    this.warning.style.marginTop = '10px';
-    this.warning.style.fontSize = '12px';
 
     // Name label (in German)
     this.nameLabel = document.createElement('label');
@@ -119,6 +112,14 @@ export default class LostMenu {
     this.modalSubmitButton.style.borderRadius = '5px';
     this.modalSubmitButton.style.fontSize = '16px';
     this.modalSubmitButton.style.cursor = 'pointer';
+
+    // Warning text (in German)
+    this.warning = document.createElement('p');
+    this.warning.textContent =
+      'Wenn du diese Seite verlässt, ohne deinen Spielernamen und deine E-Mail-Adresse einzugeben, geht dein Punktestand verloren.';
+    this.warning.style.color = '#9AF11C';
+    this.warning.style.marginTop = '10px';
+    this.warning.style.fontSize = '12px';
 
     // Try Again button (in German)
     this.tryAgainButton = document.createElement('button');
