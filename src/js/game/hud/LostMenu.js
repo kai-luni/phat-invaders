@@ -321,7 +321,7 @@ export default class LostMenu {
   }
 
   canSubmitHighscore() {
-    return this.highScore > 8000;
+    return this.highScore > 4000;
   }
 
   hideModal() {
